@@ -1,12 +1,12 @@
 package br.com.planejizze.service;
 
+import br.com.planejizze.exceptions.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 public abstract class AbstractService<T, ID, REPO extends JpaRepository<T, ID>> {
 
@@ -27,8 +27,9 @@ public abstract class AbstractService<T, ID, REPO extends JpaRepository<T, ID>> 
     }
 
     @Transactional(readOnly = true)
-    public Optional<T> findById(ID id) {
-        return repo.findById(id);
+    public T findById(ID id) throws NotFoundException {
+        return repo.findById(id).orElseThrow(() ->
+                new NotFoundException("Dados não encontrados! Id: " + id));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -47,7 +48,7 @@ public abstract class AbstractService<T, ID, REPO extends JpaRepository<T, ID>> 
     }
 
     @Transactional(readOnly = true)
-    public boolean existsById(ID id) {
+    public Boolean existsById(ID id) {
         return repo.existsById(id);
     }
 
