@@ -3,8 +3,7 @@ package br.com.planejizze.enums;
 public enum StatusReceita {
     RECEBIDO(1, "RECEBIDO"),
     A_RECEBER(2, "A RECEBER"),
-    ATRASADA(3, "ATRASADA"),
-    CANCELADA(4, "CANCELADA");
+    ATRASADA(3, "ATRASADA");
 
     private final int cod;
     private final String descricao;

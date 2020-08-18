@@ -19,17 +19,17 @@ public abstract class AbstractResource<T, ID, REPO extends JpaRepository<T, ID>,
     }
 
     @PostMapping(path = "/save")
-    public ResponseEntity<T> save(@RequestBody T entity) {
+    public ResponseEntity save(@RequestBody T entity) {
         return ResponseEntity.ok(service.save(entity));
     }
 
     @PutMapping(path = "/update")
-    public ResponseEntity<T> update(@RequestBody T entity) {
+    public ResponseEntity update(@RequestBody T entity) {
         return ResponseEntity.ok(service.update(entity));
     }
 
-    @GetMapping(path = "byId/{id}")
-    public ResponseEntity<T> findById(@PathVariable ID id) throws NotFoundException {
+    @GetMapping(path = "/byId/{id}")
+    public ResponseEntity findById(@PathVariable ID id) throws NotFoundException {
         return ResponseEntity.ok(service.findById(id));
     }
 
@@ -40,12 +40,12 @@ public abstract class AbstractResource<T, ID, REPO extends JpaRepository<T, ID>,
     }
 
     @GetMapping(path = "/findAll")
-    public ResponseEntity<List<T>> findAll() {
+    public ResponseEntity<List> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping(path = "/paginated")
-    public ResponseEntity<Page<T>> findAllWithPagination(Pageable pageable) {
+    public ResponseEntity<Page> findAllWithPagination(Pageable pageable) {
         return ResponseEntity.ok(service.findAllWithPagination(pageable));
     }
 

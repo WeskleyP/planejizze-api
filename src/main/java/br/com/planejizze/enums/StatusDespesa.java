@@ -3,8 +3,7 @@ package br.com.planejizze.enums;
 public enum StatusDespesa {
     PAGO(1, "PAGO"),
     A_PAGAR(2, "A PAGAR"),
-    ATRASADA(3, "ATRASADA"),
-    CANCELADA(4, "CANCELADA");
+    ATRASADA(3, "ATRASADA");
 
     private final int cod;
     private final String descricao;

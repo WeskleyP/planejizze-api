@@ -38,7 +38,7 @@ public class Usuario {
     @NotBlank(message = "O username deve ser informado!")
     @NotNull(message = "O username não deve ser nulo!")
     private String username;
-    @Column(name = "nome")
+    @Column(name = "email")
     @Email(message = "Digite um email válido")
     @NotBlank(message = "O email deve ser informado!")
     @NotNull(message = "O email não deve ser nulo!")
