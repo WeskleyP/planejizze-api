@@ -26,3 +26,24 @@ spring:
         show-sql: true
     hibernate:
       ddl-auto: create-drop
+  mail:
+    host: smtp.gmail.com
+    username: weskleypedro@gmail.com
+    password: zdqbtegnjlmkoqcs
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          ssl:
+            enable: true
+          auth: true
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+            fallback: false
+security:
+  jwt:
+    token:
+      secret-key: "Chave secreta para ser utilizada na api"
+      expire-length: 3600000
