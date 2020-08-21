@@ -28,8 +28,8 @@ spring:
       ddl-auto: create-drop
   mail:
     host: smtp.gmail.com
-    username: weskleypedro@gmail.com
-    password: zdqbtegnjlmkoqcs
+    username: ${SMTP_EMAIL}
+    password: ${SMTP_PASSWORD}
     properties:
       mail:
         smtp:
@@ -47,3 +47,5 @@ security:
     token:
       secret-key: "Chave secreta para ser utilizada na api"
       expire-length: 3600000
+default:
+  sender: weskleypedro@gmail.com
