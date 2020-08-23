@@ -16,10 +16,11 @@ import java.util.Date;
 @Table(name = "despesa")
 @Data
 @NoArgsConstructor
+@SequenceGenerator(name = "despesa_sequence", sequenceName = "despesa_sequence_pkey", allocationSize = 1)
 public class Despesa {
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "despesa_sequence")
     @Column(name = "id", unique = true)
     private Long id;
     @Column(name = "descricao")
@@ -43,10 +44,10 @@ public class Despesa {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "despesa")
     private TipoPagamento tipoPagamento;
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "despesa_usuario_fkey"))
     private Usuario usuario;
     @ManyToOne
-    @JoinColumn(name = "categoria_despesa_id", nullable = false)
+    @JoinColumn(name = "categoria_despesa_id", nullable = false, foreignKey = @ForeignKey(name = "despesa_categoria_despesa_fkey"))
     private CategoriaDespesa categoriaDespesa;
 
 }

@@ -27,12 +27,13 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE usuario SET active = false WHERE id = ?")
 @Where(clause = Constants.ATIVO)
+@SequenceGenerator(name = "usuario_sequence", sequenceName = "usuario_sequence_pkey", allocationSize = 1)
 public class Usuario implements UserDetails {
 
     private static final long serialVersionUID = 8815680579773416488L;
     @EqualsAndHashCode.Include
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usuario_sequence")
     @Column(name = "id", unique = true)
     private Long id;
     @Column(name = "nome")
@@ -64,8 +65,8 @@ public class Usuario implements UserDetails {
     private Boolean isActive;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "usuario_role",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
+            joinColumns = @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "usuario_role_usuario_fkey")),
+            inverseJoinColumns = @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "usuario_role_role_fkey")))
     private List<Role> roles = new ArrayList<>();
 
     @Override

@@ -2,10 +2,7 @@ package br.com.planejizze.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
 @JsonTypeName("pagamentoComCartao")
@@ -15,6 +12,6 @@ public class TipoPagamentoCartao extends TipoPagamento {
     @Column(name = "quantidade_parcelas")
     private Long quantidadeParcelas;
     @ManyToOne
-    @JoinColumn(name = "cartao_id")
+    @JoinColumn(name = "cartao_id", foreignKey = @ForeignKey(name = "tipo_pagamento_cartao_cartao_fkey"))
     private Cartao cartao;
 }

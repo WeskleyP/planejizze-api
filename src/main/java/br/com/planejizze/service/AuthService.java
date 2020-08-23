@@ -78,12 +78,12 @@ public class AuthService {
         long date = Instant.now().toEpochMilli() / 1000L;
         Comprovante comprovante =
                 Comprovante.builder()
-                        .active(true)
-                        .requestedAt(date)
-                        .user(usuario)
-                        .uuid(token)
-                        .expire(date + 86400)
-                        .payload("{\"type\": \"account_confirmation\"}")
+                        .setActive(true)
+                        .setRequestedAt(date)
+                        .setUser(usuario)
+                        .setUuid(token)
+                        .setExpire(date + 86400)
+                        .setPayload("{\"type\": \"account_confirmation\"}")
                         .build();
         comprovanteRepository.save(comprovante);
     }

@@ -8,6 +8,8 @@ import br.com.planejizze.dto.auth.LoginResponseDTO;
 import br.com.planejizze.dto.auth.RegisterDTO;
 import br.com.planejizze.exceptions.EmailNotFoundException;
 import br.com.planejizze.exceptions.auth.BadCredentialsException;
+import br.com.planejizze.exceptions.auth.EmailNotVerifiedException;
+import br.com.planejizze.model.Usuario;
 import br.com.planejizze.repository.UsuarioRepository;
 import br.com.planejizze.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +45,12 @@ public class AuthResource {
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO loginDTO) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getSenha()));
-            String token = jwtTokenProvider.createToken(loginDTO.getEmail(),
-                    this.usuarioRepository.findByEmail(loginDTO.getEmail())
-                            .orElseThrow(() -> new EmailNotFoundException("Email " + loginDTO.getEmail() + "not found"))
-                            .getRoles());
+            Usuario usuario = this.usuarioRepository.findByEmail(loginDTO.getEmail())
+                    .orElseThrow(() -> new EmailNotFoundException("Email " + loginDTO.getEmail() + "not found"));
+            if (!usuario.getEmailVerified()) {
+                throw new EmailNotVerifiedException("Email não verificado!");
+            }
+            String token = jwtTokenProvider.createToken(loginDTO.getEmail(), usuario.getRoles());
             return ResponseEntity.ok(new LoginResponseDTO(token));
         } catch (AuthenticationException e) {
             throw new BadCredentialsException("Email ou senha inválidos!");

@@ -23,7 +23,7 @@ public abstract class TipoPagamento implements Serializable {
 
     @JsonIgnore
     @OneToOne
-    @JoinColumn(name = "despesa_id")
+    @JoinColumn(name = "despesa_id", foreignKey =  @ForeignKey(name = "tipo_pagamento_despesa_fkey"))
     @MapsId
     private Despesa despesa;
 

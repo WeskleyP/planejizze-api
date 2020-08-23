@@ -18,11 +18,12 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE categoria_receita SET active = false WHERE id = ?")
 @Where(clause = Constants.ATIVO)
+@SequenceGenerator(name = "categoria_receita_sequence", sequenceName = "categoria_receita_sequence_pkey", initialValue = 30, allocationSize = 1)
 public class CategoriaReceita {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categoria_receita_sequence")
     @Column(name = "id", unique = true)
     private Long id;
     @Column(name = "nome")
@@ -33,6 +34,6 @@ public class CategoriaReceita {
     private Boolean isActive;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "categoria_receita_usuario_fkey"))
     private Usuario usuario;
 }

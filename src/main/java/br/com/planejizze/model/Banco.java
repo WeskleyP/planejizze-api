@@ -12,11 +12,12 @@ import javax.persistence.*;
 @Table(name = "planejamento")
 @Data
 @NoArgsConstructor
+@SequenceGenerator(name = "banco_sequence", sequenceName = "banco_sequence_pkey", allocationSize = 1)
 public class Banco {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "banco_sequence")
     @Column(name = "id", unique = true)
     private Long id;
     @Column(name = "descricao")
@@ -28,7 +29,7 @@ public class Banco {
     private TipoConta tipoConta;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "banco_usuario_fkey"))
     private Usuario usuario;
 
 }

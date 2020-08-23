@@ -18,11 +18,12 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @Where(clause = Constants.ATIVO)
+@SequenceGenerator(name = "cartao_sequence", sequenceName = "cartao_sequence_pkey", allocationSize = 1)
 public class Cartao {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cartao_sequence")
     @Column(name = "id", unique = true)
     private Long id;
     @Column(name = "nome")
@@ -43,6 +44,6 @@ public class Cartao {
     private Date dataVencimento;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "cartao_usuario_fkey"))
     private Usuario usuario;
 }

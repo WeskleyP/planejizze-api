@@ -16,11 +16,12 @@ import java.util.Date;
 @Table(name = "receita")
 @Data
 @NoArgsConstructor
+@SequenceGenerator(name = "receita_sequence", sequenceName = "receita_sequence_pkey", allocationSize = 1)
 public class Receita {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "receita_sequence")
     @Column(name = "id", unique = true)
     private Long id;
     @Column(name = "descricao")
@@ -45,6 +46,6 @@ public class Receita {
     private TipoRecebimento tipoRecebimento;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "receita_usuario_fkey"))
     private Usuario usuario;
 }

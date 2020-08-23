@@ -17,10 +17,11 @@ import java.util.List;
 @Table(name = "planejamento")
 @Data
 @NoArgsConstructor
+@SequenceGenerator(name = "planejamento_sequence", sequenceName = "planejamento_sequence_pkey", allocationSize = 1)
 public class Planejamento {
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "planejamento_sequence")
     @Column(name = "id", unique = true)
     private Long id;
     @Column(name = "descricao")
@@ -49,7 +50,7 @@ public class Planejamento {
     private Date dataFim;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "planejamento_usuario_fkey"))
     private Usuario usuario;
     @OneToMany(mappedBy = "planejamentoCategoriaPK.planejamento", fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE})
