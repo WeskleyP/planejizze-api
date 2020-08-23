@@ -1,5 +1,6 @@
 package br.com.planejizze.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,6 +34,7 @@ public class Role {
     @Column(name = "permissions", columnDefinition = "jsonb")
     private Object permissions;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "roles")
     private List<Usuario> usuarios = new ArrayList<>();
 }

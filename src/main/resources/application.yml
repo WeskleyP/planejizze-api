@@ -25,7 +25,7 @@ spring:
         format-sql: true
         show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   mail:
     host: smtp.gmail.com
     username: ${SMTP_EMAIL}
@@ -49,3 +49,4 @@ security:
       expire-length: 3600000
 default:
   sender: weskleypedro@gmail.com
+  dns: http://localhost:5555
