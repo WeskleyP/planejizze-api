@@ -1,6 +1,9 @@
 package br.com.planejizze.service;
 
+import br.com.planejizze.dto.ForgetPasswordDTO;
 import br.com.planejizze.dto.auth.RegisterDTO;
+import br.com.planejizze.exceptions.ComprovanteException;
+import br.com.planejizze.exceptions.NotFoundException;
 import br.com.planejizze.exceptions.auth.DifferentPasswordException;
 import br.com.planejizze.exceptions.auth.EmailExistsException;
 import br.com.planejizze.model.Comprovante;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -51,7 +55,7 @@ public class AuthService {
         user.setIsActive(true);
         user.setEmailVerified(false);
         if (!user.getSenha().equals(user.getContraSenha())) {
-            throw new DifferentPasswordException("As senhas informadas estão divergentes");
+            throw new DifferentPasswordException("As senhas informadas estão divergentes!");
         }
         user.setRoles(Collections.singletonList(roleRepository.findById(1L).get()));
         Usuario usuario = new Usuario();
@@ -68,13 +72,14 @@ public class AuthService {
         String token = UUIDUtils.generateToken();
         String body = "Para confirmar sua conta, clique no seguinte link: " +
                 "<a href='" + this.applicationDns +
-                "/auth/confirm_account?token=" + token +
+                "/auth/confirmAccount?token=" + token +
                 "' a> Confirmar sua conta</a>";
-        criarComprovante(usuario, token);
+        String type = "{\"type\": \"account_confirmation\"}";
+        criarComprovante(usuario, token, type);
         emailService.sendMessage(usuario.getEmail(), "Confirme sua conta", body);
     }
 
-    public void criarComprovante(Usuario usuario, String token) {
+    public void criarComprovante(Usuario usuario, String token, String payload) {
         long date = Instant.now().toEpochMilli() / 1000L;
         Comprovante comprovante =
                 Comprovante.builder()
@@ -83,8 +88,91 @@ public class AuthService {
                         .setUser(usuario)
                         .setUuid(token)
                         .setExpire(date + 86400)
-                        .setPayload("{\"type\": \"account_confirmation\"}")
+                        .setPayload(payload)
                         .build();
+        comprovanteRepository.save(comprovante);
+    }
+
+    public void confirmUserAccount(String token) {
+        if (!Optional.ofNullable(token).isPresent()) {
+            throw new ComprovanteException("Token não informado!");
+        }
+        Optional<Usuario> usuario = usuarioRepository.findUsuarioUsingConfirmationAccountToken(token);
+        if (!usuario.isPresent()) {
+            throw new ComprovanteException("Usuário não encontrado ou comprovante expirado!");
+        }
+        Usuario user = usuario.get();
+        user.setEmailVerified(true);
+        usuarioRepository.save(user);
+    }
+
+    public void resendEmailConfirmation(String email) {
+        Optional<Usuario> usuario = usuarioRepository.findOneByEmail(email);
+        if (usuario.isPresent()) {
+            Usuario user = usuario.get();
+            if (user.getEmail() == null) {
+                throw new ComprovanteException("O email não está cadastrado!");
+            }
+            if (user.getEmailVerified()) {
+                throw new ComprovanteException("O email já está verificado!");
+            }
+            createAndSendAccountConfirmationEmail(user);
+        } else {
+            throw new NotFoundException("Usuário não encontrado!");
+        }
+    }
+
+    public void generateAndSendNewPassword(String email) {
+        Optional<Usuario> usuario = usuarioRepository.findOneByEmail(email);
+        if (usuario.isPresent()) {
+            Usuario user = usuario.get();
+            if (user.getEmail() == null) {
+                throw new ComprovanteException("O email não está cadastrado!");
+            }
+            if (!user.getEmailVerified()) {
+                throw new ComprovanteException("O usuário não está verificado!");
+            }
+            sendForgetPasswordEmail(user);
+        } else {
+            throw new NotFoundException("Usuário não encontrado!");
+        }
+    }
+
+    private void sendForgetPasswordEmail(Usuario user) {
+        String token = UUIDUtils.generateToken();
+        String payload = "{\"type\": \"forget_password\"}";
+        criarComprovante(user, token, payload);
+        String subject = "Recuperar sua senha";
+        String body = "Clique " +
+                "<a href='" +
+                applicationDns + "/auth/resetPassword?token=" +
+                token + "'" +
+                ">aqui</a>" +
+                " para recuperar sua senha";
+        emailService.sendMessage(user.getEmail(), subject, body);
+    }
+
+    public Usuario verifyForgetPasswordVoucher(String token) {
+        if (!Optional.ofNullable(token).isPresent()) {
+            throw new ComprovanteException("Comprovante não informado!");
+        }
+        Optional<Usuario> usuario = usuarioRepository.findOneByForgetPasswordVoucher(token);
+        if (!usuario.isPresent()) {
+            throw new ComprovanteException("Usuário não encontrado ou comprovante expirado!");
+        }
+        return usuario.get();
+    }
+
+    public void changePassword(String token, ForgetPasswordDTO forgetPasswordDTO) {
+        Usuario user = verifyForgetPasswordVoucher(token);
+        if (!forgetPasswordDTO.getSenha().equals(forgetPasswordDTO.getContraSenha())) {
+            throw new DifferentPasswordException("As senhas informadas estão divergentes!");
+        }
+        String password = passwordEncoder.encode(forgetPasswordDTO.getSenha());
+        user.setSenha(password);
+        usuarioRepository.save(user);
+        Comprovante comprovante = comprovanteRepository.findById(token).get();
+        comprovante.setActive(false);
         comprovanteRepository.save(comprovante);
     }
 }

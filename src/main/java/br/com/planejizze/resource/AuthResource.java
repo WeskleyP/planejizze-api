@@ -2,6 +2,7 @@ package br.com.planejizze.resource;
 
 import br.com.planejizze.config.jwt.JwtTokenProvider;
 import br.com.planejizze.converters.UsuarioConverter;
+import br.com.planejizze.dto.ForgetPasswordDTO;
 import br.com.planejizze.dto.UsuarioDTO;
 import br.com.planejizze.dto.auth.LoginDTO;
 import br.com.planejizze.dto.auth.LoginResponseDTO;
@@ -13,14 +14,14 @@ import br.com.planejizze.model.Usuario;
 import br.com.planejizze.repository.UsuarioRepository;
 import br.com.planejizze.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/auth")
@@ -31,6 +32,8 @@ public class AuthResource {
     private final UsuarioRepository usuarioRepository;
     private final AuthService authService;
     private final UsuarioConverter usuarioConverter;
+    @Value("${default.front-url}")
+    private String frontUrl;
 
     @Autowired
     public AuthResource(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UsuarioRepository usuarioRepository, AuthService authService, UsuarioConverter usuarioConverter) {
@@ -41,7 +44,7 @@ public class AuthResource {
         this.usuarioConverter = usuarioConverter;
     }
 
-    @PostMapping("/login")
+    @PostMapping(path = "/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO loginDTO) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getSenha()));
@@ -57,8 +60,46 @@ public class AuthResource {
         }
     }
 
-    @PostMapping("/register")
+    @PostMapping(path = "/register")
     public ResponseEntity<UsuarioDTO> register(@RequestBody RegisterDTO registerDTO) {
         return ResponseEntity.ok(usuarioConverter.convertToDTO(authService.registerNewUser(registerDTO)));
+    }
+
+    @GetMapping(path = "/confirmAccount")
+    public ResponseEntity confirmAccount(@RequestParam("token") String token) {
+        try {
+            authService.confirmUserAccount(token);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, frontUrl + "/email-situation?situation=error").build();
+        }
+        return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, frontUrl + "/email-situation?situation=success").build();
+    }
+
+    @PostMapping(path = "/resendEmailConfirmation")
+    public ResponseEntity resendEmailConfirmation(@RequestBody String email) {
+        authService.resendEmailConfirmation(email);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(path = "/forgetPassword")
+    public ResponseEntity forgetPassword(@RequestBody String email) {
+        authService.generateAndSendNewPassword(email);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(path = "/resetPassword")
+    public ResponseEntity resetPassword(@RequestParam("token") String token) {
+        try {
+            authService.verifyForgetPasswordVoucher(token);
+            return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, frontUrl + "/redefine-password?token=" + token).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, frontUrl + "/redefine-password?error").build();
+        }
+    }
+
+    @PostMapping(path = "/passwordForget")
+    public ResponseEntity changePassword(@RequestParam("token") String token, @RequestBody ForgetPasswordDTO forgetPasswordDTO) {
+        authService.changePassword(token, forgetPasswordDTO);
+        return ResponseEntity.ok().build();
     }
 }

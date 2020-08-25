@@ -50,3 +50,4 @@ security:
 default:
   sender: weskleypedro@gmail.com
   dns: http://localhost:5555
+  front-url: http://localhost:8080
