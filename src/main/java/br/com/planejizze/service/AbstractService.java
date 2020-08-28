@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public abstract class AbstractService<T, ID, REPO extends JpaRepository<T, ID>> {
@@ -17,38 +18,38 @@ public abstract class AbstractService<T, ID, REPO extends JpaRepository<T, ID>> 
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public T save(T entity) {
+    public T save(T entity, HttpServletRequest request) {
         return repo.save(entity);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public T update(T entity) {
+    public T update(T entity, HttpServletRequest request) {
         return repo.save(entity);
     }
 
     @Transactional(readOnly = true)
-    public T findById(ID id) throws NotFoundException {
+    public T findById(ID id, HttpServletRequest request) throws NotFoundException {
         return repo.findById(id).orElseThrow(() ->
                 new NotFoundException("Dados não encontrados! Id: " + id));
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteById(ID id) {
+    public void deleteById(ID id, HttpServletRequest request) {
         repo.deleteById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<T> findAll() {
+    public List<T> findAll(HttpServletRequest request) {
         return repo.findAll();
     }
 
     @Transactional(readOnly = true)
-    public Page<T> findAllWithPagination(Pageable pageable) {
+    public Page<T> findAllWithPagination(Pageable pageable, HttpServletRequest request) {
         return repo.findAll(pageable);
     }
 
     @Transactional(readOnly = true)
-    public Boolean existsById(ID id) {
+    public Boolean existsById(ID id, HttpServletRequest request) {
         return repo.existsById(id);
     }
 

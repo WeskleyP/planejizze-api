@@ -1,6 +1,7 @@
 package br.com.planejizze.model;
 
 import br.com.planejizze.utils.Constants;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -43,6 +44,7 @@ public class Cartao {
     @Column(name = "data_vencimento")
     private Date dataVencimento;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "cartao_usuario_fkey"))
     private Usuario usuario;

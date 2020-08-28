@@ -1,6 +1,7 @@
 package br.com.planejizze.model;
 
 import br.com.planejizze.enums.TipoConta;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,7 @@ public class Banco {
     @Column(name = "tipo_conta")
     private TipoConta tipoConta;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "banco_usuario_fkey"))
     private Usuario usuario;

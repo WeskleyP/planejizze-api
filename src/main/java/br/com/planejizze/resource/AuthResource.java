@@ -53,7 +53,7 @@ public class AuthResource {
             if (!usuario.getEmailVerified()) {
                 throw new EmailNotVerifiedException("Email não verificado!");
             }
-            String token = jwtTokenProvider.createToken(loginDTO.getEmail(), usuario.getRoles());
+            String token = jwtTokenProvider.createToken(loginDTO.getEmail(), usuario.getRoles(), usuario.getId());
             return ResponseEntity.ok(new LoginResponseDTO(token));
         } catch (AuthenticationException e) {
             throw new BadCredentialsException("Email ou senha inválidos!");

@@ -1,6 +1,7 @@
 package br.com.planejizze.model;
 
 import br.com.planejizze.utils.Constants;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -33,6 +34,7 @@ public class CategoriaPlanejamento {
     @Column(name = "active", columnDefinition = "boolean default true", nullable = false)
     private Boolean isActive;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "categoria_planejamento_usuario_fkey"))
     private Usuario usuario;

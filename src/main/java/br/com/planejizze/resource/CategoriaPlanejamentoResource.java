@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -26,8 +27,8 @@ public class CategoriaPlanejamentoResource extends AbstractResource<CategoriaPla
     }
 
     @Override
-    public ResponseEntity<List> findAll() {
-        List<CategoriaPlanejamento> categoriaPlanejamentos = categoriaPlanejamentoService.findAll();
+    public ResponseEntity<List> findAll(HttpServletRequest request) {
+        List<CategoriaPlanejamento> categoriaPlanejamentos = categoriaPlanejamentoService.findAll(request);
         return ResponseEntity.ok(categoriaPlanejamentoConverter.convertListToDTO(categoriaPlanejamentos));
     }
 }

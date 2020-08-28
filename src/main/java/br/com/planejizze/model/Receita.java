@@ -1,6 +1,7 @@
 package br.com.planejizze.model;
 
 import br.com.planejizze.enums.StatusReceita;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -45,6 +46,7 @@ public class Receita {
     @OneToOne(mappedBy = "receita", cascade = CascadeType.ALL)
     private TipoRecebimento tipoRecebimento;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "receita_usuario_fkey"))
     private Usuario usuario;

@@ -33,13 +33,14 @@ public class JwtTokenProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public String createToken(String username, List<Role> roles) {
+    public String createToken(String username, List<Role> roles, Long userId) {
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("roles", roles);
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
         return Jwts.builder()
                 .setClaims(claims)
+                .claim("user", userId)
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
