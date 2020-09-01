@@ -1,18 +1,15 @@
 package br.com.planejizze.utils;
 
-import io.jsonwebtoken.Jwts;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.impl.DefaultJwtParser;
 
 import javax.servlet.http.HttpServletRequest;
 
 public class TokenUtils {
 
     private final HttpServletRequest request;
-    @Value("${security.jwt.token.secret-key}")
-    private String secretKey;
 
-    @Autowired
     public TokenUtils(HttpServletRequest request) {
         this.request = request;
     }
@@ -23,7 +20,14 @@ public class TokenUtils {
 
     public Long getUserId() {
         String token = request.getHeader("Authorization").substring(7);
-        return Long.parseLong(Jwts.parser().setSigningKey(secretKey)
-                .parseClaimsJws(token).getBody().get("user", String.class));
+        return this.readWithoutSigningKey(token).get("user", Integer.class).longValue();
+    }
+
+    public Claims readWithoutSigningKey(String token) {
+        String[] splitToken = token.split("\\.");
+        String unsignedToken = splitToken[0] + "." + splitToken[1] + ".";
+        DefaultJwtParser parser = new DefaultJwtParser();
+        Jwt<?, ?> jwt = parser.parse(unsignedToken);
+        return (Claims) jwt.getBody();
     }
 }

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.10.0.final using JasperReports Library version 6.10.0-unknown  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorio_receitas" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="aca60a00-3bba-41ac-8152-a3124e9740c7">
+	<property name="com.jaspersoft.studio.data.sql.tables" value="cmVjZWl0YSBBUyAsMTM1LDY1LDNmYTkyNjI2LTI0MDItNGM2OS05MzdjLTU1NTdjZTFlYTA5NDs="/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="PG_Connection"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT receita.data_recebimento,
+	receita.descricao,
+	receita.status_receita,
+	receita.valor
+FROM receita]]>
+	</queryString>
+	<field name="data_recebimento" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="data_recebimento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="receita"/>
+	</field>
+	<field name="descricao" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="descricao"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="receita"/>
+	</field>
+	<field name="status_receita" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="status_receita"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="receita"/>
+	</field>
+	<field name="valor" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="valor"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="receita"/>
+	</field>
+	<group name="data_recebimento">
+		<groupExpression><![CDATA[$F{data_recebimento}]]></groupExpression>
+	</group>
+	<group name="descricao">
+		<groupExpression><![CDATA[$F{descricao}]]></groupExpression>
+	</group>
+	<group name="status_receita">
+		<groupExpression><![CDATA[$F{status_receita}]]></groupExpression>
+	</group>
+	<group name="valor">
+		<groupExpression><![CDATA[$F{valor}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="78" uuid="5ececde2-97d4-4080-80a9-7240ef99e9ab"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="26" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Relatório de Receitas]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="31" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="141" height="30" uuid="0c567501-7a7f-4bef-b066-364989ecb007">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fea84a85-efd4-4a03-a906-7fe6797373fa"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data de Recebimento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="141" y="0" width="138" height="30" uuid="0150e78c-9a99-4d4e-93f0-1f422611ac83">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="746027b5-be3c-488a-ab30-a8f9f6281043"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="279" y="0" width="138" height="30" uuid="7af9fae2-d5fc-4750-8cf5-0efba974f0be">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7b265112-f4d8-4069-ae97-f218212c2e9a"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status da Receita]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="417" y="0" width="138" height="30" uuid="64d130d2-03e1-496f-a385-11e715928e15">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6108af4b-bfee-4f5a-be71-982b09dc68fb"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor da Receita]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="40" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="141" height="30" uuid="788695d3-50dc-48ab-85fb-cc0821a87cd6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fea84a85-efd4-4a03-a906-7fe6797373fa"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{data_recebimento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="141" y="0" width="138" height="30" uuid="392eb350-769d-477e-8ca0-03db9f9fffc0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="746027b5-be3c-488a-ab30-a8f9f6281043"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="279" y="0" width="138" height="30" uuid="9fc7f823-5c6d-40a9-b405-aa303e5a9bc4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7b265112-f4d8-4069-ae97-f218212c2e9a"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{status_receita}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="417" y="0" width="138" height="30" uuid="0eed97b4-83a7-48d6-a49f-7bc9f4b01ba5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6108af4b-bfee-4f5a-be71-982b09dc68fb"/>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="33" splitType="Stretch">
+			<textField>
+				<reportElement x="455" y="0" width="100" height="30" uuid="587533ca-e9e3-4f89-a3a6-b7fd65bb5744"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="0" y="0" width="100" height="30" uuid="fa608439-5978-4b7b-898a-f4e43a542afa"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="403" y="0" width="52" height="30" uuid="a5093a84-c9fe-4f1e-ae2b-ad4e5d43c4f8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Página:]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
