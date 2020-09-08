@@ -48,6 +48,7 @@ public class BancoService extends AbstractService<Banco, Long, BancoRepository> 
 
     @Override
     public Banco findById(Long aLong, HttpServletRequest request) throws NotFoundException {
-        return repo.findByIdAndUsuarioIdOrUsuarioIsNull(aLong, TokenUtils.from(request).getUserId());
+        return repo.findByIdAndUsuarioIdOrUsuarioIsNull(aLong, TokenUtils.from(request).getUserId())
+                .orElseThrow(() -> new NotFoundException("Dados não encontrados! Id: " + aLong));
     }
 }

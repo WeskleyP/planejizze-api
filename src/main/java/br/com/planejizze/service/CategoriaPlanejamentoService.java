@@ -48,7 +48,8 @@ public class CategoriaPlanejamentoService extends AbstractService<CategoriaPlane
 
     @Override
     public CategoriaPlanejamento findById(Long aLong, HttpServletRequest request) throws NotFoundException {
-        return repo.findByIdAndUsuarioIdOrUsuarioIsNull(aLong, TokenUtils.from(request).getUserId());
+        return repo.findByIdAndUsuarioIdOrUsuarioIsNull(aLong, TokenUtils.from(request).getUserId())
+                .orElseThrow(() -> new NotFoundException("Dados não encontrados! Id: " + aLong));
     }
 
 }

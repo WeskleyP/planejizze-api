@@ -37,11 +37,14 @@ public class RelatorioResource {
     }
 
 
-    @GetMapping(path = "/receitas/pdf")
+    @GetMapping(path = "/receitas/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> relatorioReceitaPdf() {
         byte[] relatorio = relatorioService.imprimeRelatorioNavegador("relatorio_receitas");
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=relatorio.pdf");
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
+                .contentType(MediaType.APPLICATION_PDF)
+                .headers(headers)
                 .body(relatorio);
     }
 

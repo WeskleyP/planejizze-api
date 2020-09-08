@@ -48,7 +48,8 @@ public class CategoriaDespesaService extends AbstractService<CategoriaDespesa, L
 
     @Override
     public CategoriaDespesa findById(Long aLong, HttpServletRequest request) throws NotFoundException {
-        return repo.findByIdAndUsuarioIdOrUsuarioIsNull(aLong, TokenUtils.from(request).getUserId());
+        return repo.findByIdAndUsuarioIdOrUsuarioIsNull(aLong, TokenUtils.from(request).getUserId())
+                .orElseThrow(() -> new NotFoundException("Dados não encontrados! Id: " + aLong));
     }
 
 }

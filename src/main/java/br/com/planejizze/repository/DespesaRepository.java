@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DespesaRepository extends JpaRepository<Despesa, Long> {
@@ -15,5 +16,5 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long> {
 
     Page<Despesa> findAllByUsuarioIdOrUsuarioIdIsNull(Long id, Pageable pageable);
 
-    Despesa findByIdAndUsuarioIdOrUsuarioIsNull(Long id, Long userId);
+    Optional<Despesa> findByIdAndUsuarioIdOrUsuarioIsNull(Long id, Long userId);
 }

@@ -13,6 +13,8 @@ import br.com.planejizze.exceptions.auth.EmailNotVerifiedException;
 import br.com.planejizze.model.Usuario;
 import br.com.planejizze.repository.UsuarioRepository;
 import br.com.planejizze.service.AuthService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +25,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
+@Api(tags = "Auth")
 @RestController
 @RequestMapping(path = "/auth")
 public class AuthResource {
@@ -44,6 +47,7 @@ public class AuthResource {
         this.usuarioConverter = usuarioConverter;
     }
 
+    @ApiOperation("Login na aplicação")
     @PostMapping(path = "/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO loginDTO) {
         try {

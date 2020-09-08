@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReceitaRepository extends JpaRepository<Receita, Long> {
@@ -15,5 +16,5 @@ public interface ReceitaRepository extends JpaRepository<Receita, Long> {
 
     Page<Receita> findAllByUsuarioIdOrUsuarioIdIsNull(Long id, Pageable pageable);
 
-    Receita findByIdAndUsuarioIdOrUsuarioIsNull(Long id, Long userId);
+    Optional<Receita> findByIdAndUsuarioIdOrUsuarioIsNull(Long id, Long userId);
 }

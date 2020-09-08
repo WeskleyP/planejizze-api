@@ -48,6 +48,7 @@ public class PlanejamentoService extends AbstractService<Planejamento, Long, Pla
 
     @Override
     public Planejamento findById(Long aLong, HttpServletRequest request) throws NotFoundException {
-        return repo.findByIdAndUsuarioIdOrUsuarioIsNull(aLong, TokenUtils.from(request).getUserId());
+        return repo.findByIdAndUsuarioIdOrUsuarioIsNull(aLong, TokenUtils.from(request).getUserId())
+                .orElseThrow(() -> new NotFoundException("Dados não encontrados! Id: " + aLong));
     }
 }

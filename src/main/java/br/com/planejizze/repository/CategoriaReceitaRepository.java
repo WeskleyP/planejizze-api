@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CategoriaReceitaRepository extends JpaRepository<CategoriaReceita, Long> {
@@ -15,5 +16,5 @@ public interface CategoriaReceitaRepository extends JpaRepository<CategoriaRecei
 
     Page<CategoriaReceita> findAllByUsuarioIdOrUsuarioIdIsNull(Long id, Pageable pageable);
 
-    CategoriaReceita findByIdAndUsuarioIdOrUsuarioIsNull(Long id, Long userId);
+    Optional<CategoriaReceita> findByIdAndUsuarioIdOrUsuarioIsNull(Long id, Long userId);
 }

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CartaoRepository extends JpaRepository<Cartao, Long> {
@@ -15,5 +16,5 @@ public interface CartaoRepository extends JpaRepository<Cartao, Long> {
 
     Page<Cartao> findAllByUsuarioIdOrUsuarioIdIsNull(Long id, Pageable pageable);
 
-    Cartao findByIdAndUsuarioIdOrUsuarioIsNull(Long id, Long userId);
+    Optional<Cartao> findByIdAndUsuarioIdOrUsuarioIsNull(Long id, Long userId);
 }
