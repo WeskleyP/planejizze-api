@@ -25,6 +25,7 @@ public class DespesaService extends AbstractService<Despesa, Long, DespesaReposi
         Usuario usuario = new Usuario();
         usuario.setId(TokenUtils.from(request).getUserId());
         entity.setUsuario(usuario);
+        entity.getTipoPagamento().setDespesa(entity);
         return repo.save(entity);
     }
 
@@ -33,6 +34,7 @@ public class DespesaService extends AbstractService<Despesa, Long, DespesaReposi
         Usuario usuario = new Usuario();
         usuario.setId(TokenUtils.from(request).getUserId());
         entity.setUsuario(usuario);
+        entity.getTipoPagamento().setDespesa(entity);
         return repo.save(entity);
     }
 

@@ -4,6 +4,7 @@ import br.com.planejizze.converters.CategoriaPlanejamentoConverter;
 import br.com.planejizze.model.CategoriaPlanejamento;
 import br.com.planejizze.repository.CategoriaPlanejamentoRepository;
 import br.com.planejizze.service.CategoriaPlanejamentoService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+@Api(tags = "Categorias de planejamento")
 @RestController
 @RequestMapping(path = "/categoriaPlanejamento")
 public class CategoriaPlanejamentoResource extends AbstractResource<CategoriaPlanejamento, Long, CategoriaPlanejamentoRepository, CategoriaPlanejamentoService> {

@@ -25,6 +25,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+
 @Api(tags = "Auth")
 @RestController
 @RequestMapping(path = "/auth")
@@ -80,13 +82,13 @@ public class AuthResource {
     }
 
     @PostMapping(path = "/resendEmailConfirmation")
-    public ResponseEntity resendEmailConfirmation(@RequestBody String email) {
+    public ResponseEntity resendEmailConfirmation(@RequestBody String email) throws MessagingException {
         authService.resendEmailConfirmation(email);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping(path = "/forgetPassword")
-    public ResponseEntity forgetPassword(@RequestBody String email) {
+    public ResponseEntity forgetPassword(@RequestBody String email) throws MessagingException {
         authService.generateAndSendNewPassword(email);
         return ResponseEntity.ok().build();
     }

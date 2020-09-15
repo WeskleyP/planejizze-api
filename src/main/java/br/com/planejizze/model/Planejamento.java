@@ -1,6 +1,7 @@
 package br.com.planejizze.model;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,13 +41,15 @@ public class Planejamento {
     @NotBlank(message = "A data inicial deve ser informado!")
     @NotNull(message = "A data inicial não dever ser nulo!")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
-    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    @Temporal(TemporalType.DATE)
     @Column(name = "data_inicio")
     private Date dataInicio;
     @NotBlank(message = "A data final deve ser informado!")
     @NotNull(message = "A data final não dever ser nulo!")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
-    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    @Temporal(TemporalType.DATE)
     @Column(name = "data_fim")
     private Date dataFim;
 

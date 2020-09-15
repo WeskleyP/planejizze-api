@@ -6,6 +6,7 @@ import br.com.planejizze.exceptions.NotFoundException;
 import br.com.planejizze.model.CategoriaReceita;
 import br.com.planejizze.repository.CategoriaReceitaRepository;
 import br.com.planejizze.service.CategoriaReceitaService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.List;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+@Api(tags = "Categorias de receitas")
 @RestController
 @RequestMapping(path = "/categoriaReceita")
 public class CategoriaReceitaResource extends AbstractResource<CategoriaReceita, Long, CategoriaReceitaRepository, CategoriaReceitaService> {

@@ -25,6 +25,7 @@ public class ReceitaService extends AbstractService<Receita, Long, ReceitaReposi
         Usuario usuario = new Usuario();
         usuario.setId(TokenUtils.from(request).getUserId());
         entity.setUsuario(usuario);
+        entity.getTipoRecebimento().setReceita(entity);
         return repo.save(entity);
     }
 
@@ -33,6 +34,7 @@ public class ReceitaService extends AbstractService<Receita, Long, ReceitaReposi
         Usuario usuario = new Usuario();
         usuario.setId(TokenUtils.from(request).getUserId());
         entity.setUsuario(usuario);
+        entity.getTipoRecebimento().setReceita(entity);
         return repo.save(entity);
     }
 

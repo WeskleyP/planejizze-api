@@ -1,6 +1,7 @@
 package br.com.planejizze.model;
 
 import br.com.planejizze.enums.StatusDespesa;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,18 +28,19 @@ public class Despesa {
     @Column(name = "descricao")
     private String descricao;
     @Column(name = "valor")
-    @NotBlank(message = "O valor deve ser informado!")
     @NotNull(message = "O valor não dever ser nulo!")
     private Double valor;
     @DateTimeFormat(pattern = "dd/MM/yyyy")
-    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    @Temporal(TemporalType.DATE)
     @Column(name = "data_despesa")
     private Date dataDespesa;
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "status_despesa")
     private StatusDespesa statusDespesa;
     @DateTimeFormat(pattern = "dd/MM/yyyy")
-    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    @Temporal(TemporalType.DATE)
     @Column(name = "data_vencimento")
     private Date dataVencimento;
 

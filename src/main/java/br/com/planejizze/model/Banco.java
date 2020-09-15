@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "planejamento")
+@Table(name = "banco")
 @Data
 @NoArgsConstructor
 @SequenceGenerator(name = "banco_sequence", sequenceName = "banco_sequence_pkey", allocationSize = 1)

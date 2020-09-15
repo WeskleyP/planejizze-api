@@ -3,10 +3,12 @@ package br.com.planejizze.resource;
 import br.com.planejizze.model.Banco;
 import br.com.planejizze.repository.BancoRepository;
 import br.com.planejizze.service.BancoService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Api(tags = "Banco")
 @RestController
 @RequestMapping(path = "/banco")
 public class BancoResource extends AbstractResource<Banco, Long, BancoRepository, BancoService> {

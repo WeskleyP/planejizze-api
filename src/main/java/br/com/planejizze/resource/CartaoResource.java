@@ -3,10 +3,12 @@ package br.com.planejizze.resource;
 import br.com.planejizze.model.Cartao;
 import br.com.planejizze.repository.CartaoRepository;
 import br.com.planejizze.service.CartaoService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Api(tags = "Cartão")
 @RestController
 @RequestMapping(path = "/cartao")
 public class CartaoResource extends AbstractResource<Cartao, Long, CartaoRepository, CartaoService> {

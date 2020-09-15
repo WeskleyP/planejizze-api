@@ -1,15 +1,19 @@
 package br.com.planejizze.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
+@Table(name = "tipo_recebimento_banco")
 @Entity
 @JsonTypeName("recebimentoComBanco")
-public class TipoRecebimentoBanco extends TipoPagamento {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class TipoRecebimentoBanco extends TipoRecebimento {
     private static final long serialVersionUID = -6991733856092034445L;
 
     @ManyToOne

@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Optional;
@@ -41,9 +43,13 @@ public class AuthService {
         this.comprovanteRepository = comprovanteRepository;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Usuario registerNewUser(RegisterDTO registerDTO) {
         if (usuarioRepository.findByEmail(registerDTO.getEmail()).isPresent()) {
             throw new EmailExistsException("Já existe uma conta cadastrada com o email:" + registerDTO.getEmail());
+        }
+        if (!registerDTO.getSenha().equals(registerDTO.getSenhaConfirmação())) {
+            throw new DifferentPasswordException("As senhas informadas estão divergentes!");
         }
         Usuario user = new Usuario();
         user.setNome(registerDTO.getNome());
@@ -54,9 +60,6 @@ public class AuthService {
         user.setUsername(registerDTO.getUsername());
         user.setIsActive(true);
         user.setEmailVerified(false);
-        if (!user.getSenha().equals(user.getContraSenha())) {
-            throw new DifferentPasswordException("As senhas informadas estão divergentes!");
-        }
         user.setRoles(Collections.singletonList(roleRepository.findById(1L).get()));
         Usuario usuario = new Usuario();
         try {
@@ -68,7 +71,7 @@ public class AuthService {
         return usuario;
     }
 
-    private void createAndSendAccountConfirmationEmail(Usuario usuario) {
+    private void createAndSendAccountConfirmationEmail(Usuario usuario) throws MessagingException {
         String token = UUIDUtils.generateToken();
         String body = "Para confirmar sua conta, clique no seguinte link: " +
                 "<a href='" + this.applicationDns +
@@ -106,7 +109,7 @@ public class AuthService {
         usuarioRepository.save(user);
     }
 
-    public void resendEmailConfirmation(String email) {
+    public void resendEmailConfirmation(String email) throws MessagingException {
         Optional<Usuario> usuario = usuarioRepository.findOneByEmail(email);
         if (usuario.isPresent()) {
             Usuario user = usuario.get();
@@ -122,7 +125,7 @@ public class AuthService {
         }
     }
 
-    public void generateAndSendNewPassword(String email) {
+    public void generateAndSendNewPassword(String email) throws MessagingException {
         Optional<Usuario> usuario = usuarioRepository.findOneByEmail(email);
         if (usuario.isPresent()) {
             Usuario user = usuario.get();
@@ -138,7 +141,7 @@ public class AuthService {
         }
     }
 
-    private void sendForgetPasswordEmail(Usuario user) {
+    private void sendForgetPasswordEmail(Usuario user) throws MessagingException {
         String token = UUIDUtils.generateToken();
         String payload = "{\"type\": \"forget_password\"}";
         criarComprovante(user, token, payload);

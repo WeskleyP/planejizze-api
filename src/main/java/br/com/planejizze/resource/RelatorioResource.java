@@ -1,6 +1,7 @@
 package br.com.planejizze.resource;
 
 import br.com.planejizze.service.RelatorioService;
+import io.swagger.annotations.Api;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 
+@Api(tags = "Relatórios")
 @RestController
 @RequestMapping(path = "/relatorios")
 public class RelatorioResource {

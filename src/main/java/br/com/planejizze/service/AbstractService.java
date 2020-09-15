@@ -35,7 +35,11 @@ public abstract class AbstractService<T, ID, REPO extends JpaRepository<T, ID>> 
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteById(ID id, HttpServletRequest request) {
-        repo.deleteById(id);
+        if (this.existsById(id, request)) {
+            repo.deleteById(id);
+        } else {
+            throw new NotFoundException("Dados não encontrados! Id: " + id);
+        }
     }
 
     @Transactional(readOnly = true)

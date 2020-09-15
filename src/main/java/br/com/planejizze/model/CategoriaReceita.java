@@ -31,8 +31,9 @@ public class CategoriaReceita {
     @NotBlank(message = "O nome deve ser informado!")
     @NotNull(message = "O nome não dever ser nulo!")
     private String nome;
+    @JsonIgnore
     @Column(name = "active", columnDefinition = "boolean default true", nullable = false)
-    private Boolean isActive;
+    private Boolean isActive = true;
 
     @JsonIgnore
     @ManyToOne

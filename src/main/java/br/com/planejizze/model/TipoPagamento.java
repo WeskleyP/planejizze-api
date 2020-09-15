@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 
+@Table(name = "tipo_pagamento")
 @EqualsAndHashCode
 @Data
 @NoArgsConstructor

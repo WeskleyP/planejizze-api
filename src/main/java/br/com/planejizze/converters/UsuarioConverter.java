@@ -23,7 +23,7 @@ public class UsuarioConverter {
         return modelMapper.map(usuario, UsuarioDTO.class);
     }
 
-    public Usuario convertToCategoriaDespesa(UsuarioDTO usuarioDTO) {
+    public Usuario convertToUsuario(UsuarioDTO usuarioDTO) {
         return modelMapper.map(usuarioDTO, Usuario.class);
     }
 

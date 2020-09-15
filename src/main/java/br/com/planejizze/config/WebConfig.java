@@ -2,6 +2,8 @@ package br.com.planejizze.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -16,7 +18,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
-public class SwaggerConfig implements WebMvcConfigurer {
+public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public Docket api() {
@@ -26,7 +28,17 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo())
-                .tags(new Tag("Auth", "Controlar autenticação"));
+                .tags(new Tag("Auth", "Controlar autenticação"),
+                        new Tag("Banco", "Controlar os bancos do usuário"),
+                        new Tag("Cartão", "Controlar os cartões do usuário"),
+                        new Tag("Categorias de despesas", "Controlar categorias de despesas do usuário"),
+                        new Tag("Categorias de planejamento", "Controlar categorias de planejamentos do usuário"),
+                        new Tag("Categorias de receitas", "Controlar categorias de receitas do usuário"),
+                        new Tag("Despesa", "Controlar despesas do usuário"),
+                        new Tag("Receita", "Controlar receitas do usuário"),
+                        new Tag("Planejamento", "Controlar planejamentos do usuário"),
+                        new Tag("Relatórios", "Gerar relatórios para o usuário"),
+                        new Tag("Usuário", "Controlar dados do usuário"));
     }
 
     private ApiInfo apiInfo() {
@@ -46,5 +58,16 @@ public class SwaggerConfig implements WebMvcConfigurer {
 
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
+    }
+
+    @Override
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.favorPathExtension(false)
+                .favorParameter(false)
+                .ignoreAcceptHeader(false)
+                .useRegisteredExtensionsOnly(false)
+                .defaultContentType(MediaType.APPLICATION_JSON)
+                .mediaType("json", MediaType.APPLICATION_JSON)
+                .mediaType("xml", MediaType.APPLICATION_XML);
     }
 }

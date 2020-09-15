@@ -1,6 +1,7 @@
 package br.com.planejizze.model;
 
 import br.com.planejizze.utils.Constants;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,7 +19,6 @@ import java.util.Date;
 @Table(name = "cartao")
 @Data
 @NoArgsConstructor
-@Where(clause = Constants.ATIVO)
 @SequenceGenerator(name = "cartao_sequence", sequenceName = "cartao_sequence_pkey", allocationSize = 1)
 public class Cartao {
 
@@ -39,8 +39,9 @@ public class Cartao {
     private Double limite;
     @Column(name = "empresa_cartao")
     private String empresaCartao;
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
-    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "dd/MM")
+    @JsonFormat(pattern = "dd/MM")
+    @Temporal(TemporalType.DATE)
     @Column(name = "data_vencimento")
     private Date dataVencimento;
 
