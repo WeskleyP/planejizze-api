@@ -1,6 +1,7 @@
 package br.com.planejizze.model;
 
 import br.com.planejizze.model.pk.PlanejamentoCategoriaPK;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import javax.persistence.Table;
 @Table(name = "planejamento_categoria")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class PlanejamentoCategoria {
 
     @EmbeddedId

@@ -2,6 +2,7 @@ package br.com.planejizze.exceptions.handler;
 
 import br.com.planejizze.exceptions.ComprovanteException;
 import br.com.planejizze.exceptions.EmailNotFoundException;
+import br.com.planejizze.exceptions.FileStorageException;
 import br.com.planejizze.exceptions.NotFoundException;
 import br.com.planejizze.exceptions.auth.*;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -39,7 +40,7 @@ public class ResourceExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
     }
 
-    @ExceptionHandler({Exception.class})
+    @ExceptionHandler({Exception.class, FileStorageException.class})
     public ResponseEntity<StandardError> serverError(RuntimeException e, HttpServletRequest request) {
         StandardError err = new StandardError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(),
                 System.currentTimeMillis(), "Erro no servidor!", request.getRequestURI());

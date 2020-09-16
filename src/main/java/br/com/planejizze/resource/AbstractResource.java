@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,11 +16,13 @@ import java.util.List;
 public abstract class AbstractResource<T, ID, REPO extends JpaRepository<T, ID>, SERVICE extends AbstractService<T, ID, REPO>> {
 
     protected final SERVICE service;
+    private final String className = this.getClass().getSimpleName().replace("Resource", "").toLowerCase();
 
     protected AbstractResource(SERVICE service) {
         this.service = service;
     }
 
+    @PreAuthorize(value = "hasPermission(className, 'create')")
     @ApiOperation("Salvar o objeto")
     @PostMapping(path = "/save")
     public ResponseEntity save(@RequestBody T entity, HttpServletRequest request) {
@@ -45,9 +48,11 @@ public abstract class AbstractResource<T, ID, REPO extends JpaRepository<T, ID>,
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize(value = "hasPermission(className, 'read')")
     @ApiOperation("Buscar todos os objetos")
     @GetMapping(path = "/findAll")
     public ResponseEntity<List> findAll(HttpServletRequest request) {
+        System.out.println("className: " + className);
         return ResponseEntity.ok(service.findAll(request));
     }
 

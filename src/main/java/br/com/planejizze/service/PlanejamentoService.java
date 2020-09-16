@@ -2,7 +2,9 @@ package br.com.planejizze.service;
 
 import br.com.planejizze.exceptions.NotFoundException;
 import br.com.planejizze.model.Planejamento;
+import br.com.planejizze.model.PlanejamentoCategoria;
 import br.com.planejizze.model.Usuario;
+import br.com.planejizze.model.pk.PlanejamentoCategoriaPK;
 import br.com.planejizze.repository.PlanejamentoRepository;
 import br.com.planejizze.utils.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,18 +25,30 @@ public class PlanejamentoService extends AbstractService<Planejamento, Long, Pla
 
     @Override
     public Planejamento save(Planejamento entity, HttpServletRequest request) {
-        Usuario usuario = new Usuario();
-        usuario.setId(TokenUtils.from(request).getUserId());
-        entity.setUsuario(usuario);
-        return repo.save(entity);
+        return getPlanejamento(entity, request);
     }
 
     @Override
     public Planejamento update(Planejamento entity, HttpServletRequest request) {
+        return getPlanejamento(entity, request);
+    }
+
+    private Planejamento getPlanejamento(Planejamento entity, HttpServletRequest request) {
         Usuario usuario = new Usuario();
         usuario.setId(TokenUtils.from(request).getUserId());
         entity.setUsuario(usuario);
-        return repo.save(entity);
+        Planejamento plan = repo.save(new Planejamento(entity.getId(), entity.getDescricao(), entity.getAlertaPorcentagem(),
+                entity.getReceitaTotal(), entity.getMetaGastos(), entity.getDataInicio(),
+                entity.getDataFim(), entity.getUsuario()));
+        List<PlanejamentoCategoria> planejamentoCategoria = new ArrayList<>();
+        for (PlanejamentoCategoria categoria : entity.getCategorias()) {
+            PlanejamentoCategoria pl = new PlanejamentoCategoria(new PlanejamentoCategoriaPK(
+                    plan, categoria.getPlanejamentoCategoriaPK().getCategoriaPlanejamento()),
+                    categoria.getValorMaximoGasto());
+            planejamentoCategoria.add(pl);
+        }
+        plan.setCategorias(planejamentoCategoria);
+        return repo.save(plan);
     }
 
     @Override

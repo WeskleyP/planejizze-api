@@ -62,7 +62,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers(HttpMethod.GET, "/v1/vehicles/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .apply(new JwtConfigurer(jwtTokenProvider));
+                .apply(new JwtConfigurer(jwtTokenProvider))
+                .and().cors();
     }
 
     @Bean

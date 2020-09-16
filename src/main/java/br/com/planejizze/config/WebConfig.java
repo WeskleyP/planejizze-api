@@ -3,6 +3,7 @@ package br.com.planejizze.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -18,6 +19,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
+@EnableScheduling
 public class WebConfig implements WebMvcConfigurer {
 
     @Bean
@@ -38,7 +40,8 @@ public class WebConfig implements WebMvcConfigurer {
                         new Tag("Receita", "Controlar receitas do usuário"),
                         new Tag("Planejamento", "Controlar planejamentos do usuário"),
                         new Tag("Relatórios", "Gerar relatórios para o usuário"),
-                        new Tag("Usuário", "Controlar dados do usuário"));
+                        new Tag("Usuário", "Controlar dados do usuário"),
+                        new Tag("File", "Faz upload de imagens e buscar por imagens"));
     }
 
     private ApiInfo apiInfo() {
