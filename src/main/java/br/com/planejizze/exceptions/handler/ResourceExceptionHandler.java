@@ -8,6 +8,7 @@ import br.com.planejizze.exceptions.auth.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -38,6 +39,13 @@ public class ResourceExceptionHandler {
         StandardError err = new StandardError(HttpStatus.UNAUTHORIZED.value(), e.getMessage(),
                 System.currentTimeMillis(), "Não autorizado!", request.getRequestURI());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
+    }
+
+    @ExceptionHandler({AccessDeniedException.class})
+    public ResponseEntity<StandardError> forbidden(HttpServletRequest request) {
+        StandardError err = new StandardError(HttpStatus.FORBIDDEN.value(), "Acesso Negado",
+                System.currentTimeMillis(), "Sem permissão para acessar o recurso!", request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(err);
     }
 
     @ExceptionHandler({Exception.class, FileStorageException.class})

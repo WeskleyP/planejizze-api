@@ -33,8 +33,4 @@ public class Role {
     @Type(type = "jsonb")
     @Column(name = "permissions", columnDefinition = "jsonb")
     private Object permissions;
-
-    @JsonIgnore
-    @ManyToMany(mappedBy = "roles")
-    private List<Usuario> usuarios = new ArrayList<>();
 }
