@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,6 +34,7 @@ public class CategoriaReceitaResource extends AbstractResource<CategoriaReceita,
         this.categoriaReceitaConverter = categoriaReceitaConverter;
     }
 
+    @PostAuthorize(value = "hasPermission(#this.this.class.simpleName, 'read')")
     @Override
     public ResponseEntity findAll(HttpServletRequest request) {
         List<CategoriaReceita> categoriaReceitas = categoriaReceitaService.findAll(request);
@@ -46,6 +48,7 @@ public class CategoriaReceitaResource extends AbstractResource<CategoriaReceita,
         return ResponseEntity.ok(categoriaReceitaDTOCollectionModel);
     }
 
+    @PostAuthorize(value = "hasPermission(#this.this.class.simpleName, 'read')")
     @Override
     public ResponseEntity findById(Long aLong, HttpServletRequest request) throws NotFoundException {
         CategoriaReceita categoriaReceita = categoriaReceitaService.findById(aLong, request);

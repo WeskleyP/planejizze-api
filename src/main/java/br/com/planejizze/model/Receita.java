@@ -33,7 +33,7 @@ public class Receita {
     private Double valor;
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "status_receita")
-    private StatusReceita statusDespesa;
+    private StatusReceita statusReceita;
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Temporal(TemporalType.DATE)
@@ -50,4 +50,7 @@ public class Receita {
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "receita_usuario_fkey"))
     private Usuario usuario;
+    @ManyToOne
+    @JoinColumn(name = "categoria_receita_id", nullable = false, foreignKey = @ForeignKey(name = "receita_categoria_receita_fkey"))
+    private CategoriaReceita categoriaReceita;
 }

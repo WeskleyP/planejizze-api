@@ -82,7 +82,7 @@ public class AuthService {
         emailService.sendMessage(usuario.getEmail(), "Confirme sua conta", body);
     }
 
-    public void criarComprovante(Usuario usuario, String token, String payload) {
+    protected void criarComprovante(Usuario usuario, String token, String payload) {
         long date = Instant.now().toEpochMilli() / 1000L;
         Comprovante comprovante =
                 Comprovante.builder()
@@ -141,7 +141,7 @@ public class AuthService {
         }
     }
 
-    private void sendForgetPasswordEmail(Usuario user) throws MessagingException {
+    protected void sendForgetPasswordEmail(Usuario user) throws MessagingException {
         String token = UUIDUtils.generateToken();
         String payload = "{\"type\": \"forget_password\"}";
         criarComprovante(user, token, payload);

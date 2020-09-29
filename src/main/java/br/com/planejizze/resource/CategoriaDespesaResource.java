@@ -7,6 +7,7 @@ import br.com.planejizze.service.CategoriaDespesaService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +29,7 @@ public class CategoriaDespesaResource extends AbstractResource<CategoriaDespesa,
         this.categoriaDespesaService = service;
     }
 
+    @PostAuthorize(value = "hasPermission(#this.this.class.simpleName, 'read')")
     @Override
     public ResponseEntity<List> findAll(HttpServletRequest request) {
         List<CategoriaDespesa> categoriaDespesas = categoriaDespesaService.findAll(request);

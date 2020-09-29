@@ -1,5 +1,6 @@
 package br.com.planejizze.service;
 
+import br.com.planejizze.dto.Receita30DayDTO;
 import br.com.planejizze.exceptions.NotFoundException;
 import br.com.planejizze.model.Receita;
 import br.com.planejizze.model.Usuario;
@@ -52,5 +53,17 @@ public class ReceitaService extends AbstractService<Receita, Long, ReceitaReposi
     public Receita findById(Long aLong, HttpServletRequest request) throws NotFoundException {
         return repo.findByIdAndUsuarioIdOrUsuarioIsNull(aLong, TokenUtils.from(request).getUserId())
                 .orElseThrow(() -> new NotFoundException("Dados não encontrados! Id: " + aLong));
+    }
+
+    public Receita30DayDTO findReceitasLast30Days(Long userId) {
+        return new Receita30DayDTO(repo.findReceitasLast30Days(userId));
+    }
+
+    public Receita30DayDTO findReceitasNext30Days(Long userId) {
+        return new Receita30DayDTO(repo.findReceitasNext30Days(userId));
+    }
+
+    public Receita30DayDTO findNextReceita(Long userId) {
+        return new Receita30DayDTO(repo.findNextReceita(userId));
     }
 }

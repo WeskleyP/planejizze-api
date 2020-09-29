@@ -1,6 +1,9 @@
 server:
   port: 5555
 spring:
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&useSSL=false&useTimezone=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
     username: postgres
@@ -52,7 +55,7 @@ security:
   jwt:
     token:
       secret-key: "Chave secreta para ser utilizada na api"
-      expire-length: 3600000
+      expire-length: 3600000000
 default:
   sender: weskleypedro@gmail.com
   dns: http://localhost:5555

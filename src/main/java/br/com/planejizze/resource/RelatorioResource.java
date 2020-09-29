@@ -7,6 +7,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +26,7 @@ public class RelatorioResource {
         this.relatorioService = relatorioService;
     }
 
+    @PostAuthorize(value = "hasPermission('report', 'read')")
     @GetMapping(path = "/receitas/download")
     public void relatorioReceitaDownload(HttpServletResponse response) {
         JasperPrint jasperPrint = relatorioService.imprimeRelatorioDownload("relatorio_receitas");
@@ -38,7 +40,7 @@ public class RelatorioResource {
         }
     }
 
-
+    @PostAuthorize(value = "hasPermission('report', 'read')")
     @GetMapping(path = "/receitas/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> relatorioReceitaPdf() {
         byte[] relatorio = relatorioService.imprimeRelatorioNavegador("relatorio_receitas");
