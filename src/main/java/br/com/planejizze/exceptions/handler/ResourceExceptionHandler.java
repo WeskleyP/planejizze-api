@@ -1,10 +1,11 @@
 package br.com.planejizze.exceptions.handler;
 
-import br.com.planejizze.exceptions.ComprovanteException;
-import br.com.planejizze.exceptions.EmailNotFoundException;
-import br.com.planejizze.exceptions.FileStorageException;
-import br.com.planejizze.exceptions.NotFoundException;
+import br.com.planejizze.exceptions.*;
 import br.com.planejizze.exceptions.auth.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
@@ -27,14 +29,14 @@ public class ResourceExceptionHandler {
     }
 
     @ExceptionHandler({ComprovanteException.class, DifferentPasswordException.class,
-            EmailExistsException.class, EmailNotVerifiedException.class})
+            EmailExistsException.class, EmailNotVerifiedException.class, BadParamsException.class})
     public ResponseEntity<StandardError> badRequest(RuntimeException e, HttpServletRequest request) {
         StandardError err = new StandardError(HttpStatus.BAD_REQUEST.value(), e.getMessage(),
                 System.currentTimeMillis(), "Erro na requisição de dados!", request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
     }
 
-    @ExceptionHandler({InvalidJwtAuthenticationException.class, BadCredentialsException.class})
+    @ExceptionHandler({InvalidJwtAuthenticationException.class, BadCredentialsException.class, ExpiredJwtException.class, MalformedJwtException.class, SignatureException.class})
     public ResponseEntity<StandardError> invalidAuth(RuntimeException e, HttpServletRequest request) {
         StandardError err = new StandardError(HttpStatus.UNAUTHORIZED.value(), e.getMessage(),
                 System.currentTimeMillis(), "Não autorizado!", request.getRequestURI());
@@ -70,5 +72,19 @@ public class ResourceExceptionHandler {
             err.addError(x.getField(), x.getDefaultMessage());
         }
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(err);
+    }
+
+    @ExceptionHandler(MessagingException.class)
+    public ResponseEntity<StandardError> email(MessagingException e, HttpServletRequest request) {
+        StandardError err = new StandardError(HttpStatus.REQUEST_TIMEOUT.value(), "Falha ao enviear o email",
+                System.currentTimeMillis(), "Erro por falta de tempo!", request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(err);
+    }
+
+    @ExceptionHandler(JsonProcessingException.class)
+    public ResponseEntity<StandardError> jsonProcessing(JsonProcessingException e, HttpServletRequest request) {
+        StandardError err = new StandardError(HttpStatus.BAD_REQUEST.value(), e.getMessage(),
+                System.currentTimeMillis(), "Erro ao converter valores para objetos!", request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
     }
 }

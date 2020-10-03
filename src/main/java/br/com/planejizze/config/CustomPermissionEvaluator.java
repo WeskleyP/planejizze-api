@@ -16,8 +16,6 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
             return false;
         }
         String targetType = ((String) targetDomainObject).replace("Resource", "").toUpperCase();
-        ;
-
         return hasPrivilege(auth, targetType, permission.toString().toUpperCase());
     }
 

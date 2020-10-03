@@ -31,4 +31,20 @@ public interface ReceitaRepository extends JpaRepository<Receita, Long> {
     @Query(value = "select coalesce(r.valor, 0) from receita r where r.usuario_id = 1 and r.status_receita = 1 " +
             "and (r.data_recebimento > cast(now() as date) or r.repetir = true) order by r.data_recebimento limit 1", nativeQuery = true)
     Double findNextReceita(Long userId);
+
+    @Query(value = "select cast(jsonb_build_object('valor', sum(r.valor), 'categoriaId', cr.id, " +
+            "'categoriaNome', cr.nome, 'categoriaCor', cr.cor) as text) " +
+            "from receita r " +
+            "inner join categoria_receita cr on cr.id = r.categoria_receita_id " +
+            "where r.status_receita = 0 and r.data_recebimento >  (now() - interval '6 month') " +
+            "and r.usuario_id = ?1 group by cr.id", nativeQuery = true)
+    List<String> findReceitasLast6Months(Long userId);
+
+    @Query(value = "select cast(jsonb_build_object('valor', sum(r.valor), 'categoriaId', cr.id, " +
+            "'categoriaNome', cr.nome, 'categoriaCor', cr.cor, 'mes', extract (month from r.data_recebimento)) as text) " +
+            "from receita r " +
+            "inner join categoria_receita cr on cr.id = r.categoria_receita_id " +
+            "where extract (month from r.data_recebimento) = ?2 " +
+            "and r.usuario_id = ?1 group by cr.id, r.data_recebimento", nativeQuery = true)
+    List<String> findReceitasPorCategoriaEMes(Long userId, Long mes);
 }

@@ -11,6 +11,7 @@ import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
@@ -31,6 +32,9 @@ public class CategoriaReceita {
     @NotBlank(message = "O nome deve ser informado!")
     @NotNull(message = "O nome não dever ser nulo!")
     private String nome;
+    @Column(name = "cor")
+    @Pattern(regexp = "/[0-9a-fA-F]+/", message = "Cor inváilida!")
+    private String cor;
     @JsonIgnore
     @Column(name = "active", columnDefinition = "boolean default true", nullable = false)
     private Boolean isActive = true;

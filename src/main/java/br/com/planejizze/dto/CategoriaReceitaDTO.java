@@ -12,4 +12,5 @@ public class CategoriaReceitaDTO extends RepresentationModel<CategoriaReceitaDTO
 
     private Long id;
     private String nome;
+    private String cor;
 }
