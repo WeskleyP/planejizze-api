@@ -43,6 +43,9 @@ public class Despesa {
     @Temporal(TemporalType.DATE)
     @Column(name = "data_vencimento")
     private Date dataVencimento;
+    @Column(name = "despesa_fixa", columnDefinition = "boolean default false")
+    @NotNull(message = "A opção de despesa fixa não dever ser nula!")
+    private Boolean despesaFixa;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "despesa")
     private TipoPagamento tipoPagamento;

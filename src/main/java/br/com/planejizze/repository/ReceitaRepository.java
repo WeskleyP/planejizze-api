@@ -28,7 +28,7 @@ public interface ReceitaRepository extends JpaRepository<Receita, Long> {
             " or r.repetir = true)", nativeQuery = true)
     Double findReceitasNext30Days(Long userId);
 
-    @Query(value = "select coalesce(r.valor, 0) from receita r where r.usuario_id = 1 and r.status_receita = 1 " +
+    @Query(value = "select coalesce(r.valor, 0) from receita r where r.usuario_id = ?1 and r.status_receita = 1 " +
             "and (r.data_recebimento > cast(now() as date) or r.repetir = true) order by r.data_recebimento limit 1", nativeQuery = true)
     Double findNextReceita(Long userId);
 
