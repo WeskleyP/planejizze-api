@@ -1,17 +1,24 @@
 package br.com.planejizze.service;
 
+import br.com.planejizze.config.jwt.JwtTokenProvider;
 import br.com.planejizze.dto.ForgetPasswordDTO;
+import br.com.planejizze.dto.auth.LoginResponseDTO;
 import br.com.planejizze.dto.auth.RegisterDTO;
 import br.com.planejizze.exceptions.ComprovanteException;
 import br.com.planejizze.exceptions.NotFoundException;
 import br.com.planejizze.exceptions.auth.DifferentPasswordException;
 import br.com.planejizze.exceptions.auth.EmailExistsException;
+import br.com.planejizze.exceptions.auth.InvalidJwtAuthenticationException;
 import br.com.planejizze.model.Comprovante;
 import br.com.planejizze.model.Usuario;
 import br.com.planejizze.repository.ComprovanteRepository;
 import br.com.planejizze.repository.RoleRepository;
 import br.com.planejizze.repository.UsuarioRepository;
 import br.com.planejizze.utils.UUIDUtils;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.mail.MessagingException;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,16 +38,20 @@ public class AuthService {
     private final UsuarioRepository usuarioRepository;
     private final RoleRepository roleRepository;
     private final EmailService emailService;
+    private final JwtTokenProvider jwtTokenProvider;
     private final ComprovanteRepository comprovanteRepository;
     @Value("${default.dns}")
     private String applicationDns;
+    @Value("${security.jwt.token.secret-key}")
+    private String secretKey;
 
     @Autowired
-    public AuthService(PasswordEncoder passwordEncoder, UsuarioRepository usuarioRepository, RoleRepository roleRepository, EmailService emailService, ComprovanteRepository comprovanteRepository) {
+    public AuthService(PasswordEncoder passwordEncoder, UsuarioRepository usuarioRepository, RoleRepository roleRepository, EmailService emailService, JwtTokenProvider jwtTokenProvider, ComprovanteRepository comprovanteRepository) {
         this.passwordEncoder = passwordEncoder;
         this.usuarioRepository = usuarioRepository;
         this.roleRepository = roleRepository;
         this.emailService = emailService;
+        this.jwtTokenProvider = jwtTokenProvider;
         this.comprovanteRepository = comprovanteRepository;
     }
 
@@ -51,7 +63,7 @@ public class AuthService {
         if (!registerDTO.getSenha().equals(registerDTO.getSenhaConfirmação())) {
             throw new DifferentPasswordException("As senhas informadas estão divergentes!");
         }
-        Usuario user = new Usuario();
+        var user = new Usuario();
         user.setNome(registerDTO.getNome());
         user.setSobrenome(registerDTO.getSobrenome());
         user.setSenha(passwordEncoder.encode(registerDTO.getSenha()));
@@ -61,7 +73,7 @@ public class AuthService {
         user.setIsActive(true);
         user.setEmailVerified(false);
         user.setRoles(Collections.singletonList(roleRepository.findById(1L).get()));
-        Usuario usuario = new Usuario();
+        var usuario = new Usuario();
         try {
             usuario = usuarioRepository.save(user);
             this.createAndSendAccountConfirmationEmail(usuario);
@@ -72,19 +84,19 @@ public class AuthService {
     }
 
     private void createAndSendAccountConfirmationEmail(Usuario usuario) throws MessagingException {
-        String token = UUIDUtils.generateToken();
-        String body = "Para confirmar sua conta, clique no seguinte link: " +
+        var token = UUIDUtils.generateToken();
+        var body = "Para confirmar sua conta, clique no seguinte link: " +
                 "<a href='" + this.applicationDns +
                 "/auth/confirmAccount?token=" + token +
                 "' a> Confirmar sua conta</a>";
-        String type = "{\"type\": \"account_confirmation\"}";
+        var type = "{\"type\": \"account_confirmation\"}";
         criarComprovante(usuario, token, type);
         emailService.sendMessage(usuario.getEmail(), "Confirme sua conta", body);
     }
 
     protected void criarComprovante(Usuario usuario, String token, String payload) {
-        long date = Instant.now().toEpochMilli() / 1000L;
-        Comprovante comprovante =
+        var date = Instant.now().toEpochMilli() / 1000L;
+        var comprovante =
                 Comprovante.builder()
                         .setActive(true)
                         .setRequestedAt(date)
@@ -97,22 +109,22 @@ public class AuthService {
     }
 
     public void confirmUserAccount(String token) {
-        if (!Optional.ofNullable(token).isPresent()) {
+        if (token.isEmpty()) {
             throw new ComprovanteException("Token não informado!");
         }
-        Optional<Usuario> usuario = usuarioRepository.findUsuarioUsingConfirmationAccountToken(token);
-        if (!usuario.isPresent()) {
+        var usuario = usuarioRepository.findUsuarioUsingConfirmationAccountToken(token);
+        if (usuario.isEmpty()) {
             throw new ComprovanteException("Usuário não encontrado ou comprovante expirado!");
         }
-        Usuario user = usuario.get();
+        var user = usuario.get();
         user.setEmailVerified(true);
         usuarioRepository.save(user);
     }
 
     public void resendEmailConfirmation(String email) throws MessagingException {
-        Optional<Usuario> usuario = usuarioRepository.findOneByEmail(email);
+        var usuario = usuarioRepository.findOneByEmail(email);
         if (usuario.isPresent()) {
-            Usuario user = usuario.get();
+            var user = usuario.get();
             if (user.getEmail() == null) {
                 throw new ComprovanteException("O email não está cadastrado!");
             }
@@ -126,9 +138,9 @@ public class AuthService {
     }
 
     public void generateAndSendNewPassword(String email) throws MessagingException {
-        Optional<Usuario> usuario = usuarioRepository.findOneByEmail(email);
+        var usuario = usuarioRepository.findOneByEmail(email);
         if (usuario.isPresent()) {
-            Usuario user = usuario.get();
+            var user = usuario.get();
             if (user.getEmail() == null) {
                 throw new ComprovanteException("O email não está cadastrado!");
             }
@@ -142,11 +154,11 @@ public class AuthService {
     }
 
     protected void sendForgetPasswordEmail(Usuario user) throws MessagingException {
-        String token = UUIDUtils.generateToken();
-        String payload = "{\"type\": \"forget_password\"}";
+        var token = UUIDUtils.generateToken();
+        var payload = "{\"type\": \"forget_password\"}";
         criarComprovante(user, token, payload);
-        String subject = "Recuperar sua senha";
-        String body = "Clique " +
+        var subject = "Recuperar sua senha";
+        var body = "Clique " +
                 "<a href='" +
                 applicationDns + "/auth/resetPassword?token=" +
                 token + "'" +
@@ -156,26 +168,69 @@ public class AuthService {
     }
 
     public Usuario verifyForgetPasswordVoucher(String token) {
-        if (!Optional.ofNullable(token).isPresent()) {
+        if (token.isEmpty()) {
             throw new ComprovanteException("Comprovante não informado!");
         }
         Optional<Usuario> usuario = usuarioRepository.findOneByForgetPasswordVoucher(token);
-        if (!usuario.isPresent()) {
+        if (usuario.isEmpty()) {
             throw new ComprovanteException("Usuário não encontrado ou comprovante expirado!");
         }
         return usuario.get();
     }
 
     public void changePassword(String token, ForgetPasswordDTO forgetPasswordDTO) {
-        Usuario user = verifyForgetPasswordVoucher(token);
+        var user = verifyForgetPasswordVoucher(token);
         if (!forgetPasswordDTO.getSenha().equals(forgetPasswordDTO.getContraSenha())) {
             throw new DifferentPasswordException("As senhas informadas estão divergentes!");
         }
-        String password = passwordEncoder.encode(forgetPasswordDTO.getSenha());
+        var password = passwordEncoder.encode(forgetPasswordDTO.getSenha());
         user.setSenha(password);
         usuarioRepository.save(user);
-        Comprovante comprovante = comprovanteRepository.findById(token).get();
+        var comprovante = comprovanteRepository.findById(token).get();
         comprovante.setActive(false);
         comprovanteRepository.save(comprovante);
+    }
+
+    public Jws<Claims> readToken(String token) {
+        return Jwts.parser().setSigningKey(this.secretKey.getBytes()).parseClaimsJws(token);
+    }
+
+    public LoginResponseDTO refreshToken(String refresh) {
+        isValid(refresh);
+        var claims = readToken(refresh).getBody();
+        var email = claims.getSubject();
+        var usuario = this.usuarioRepository.findByEmail(email);
+        if (usuario.isEmpty()) {
+            throw new NotFoundException("Usuário inativo ou não encontrado");
+        }
+        var permissions = usuario.get().getRoles();
+        var userId = claims.get("user", Long.class);
+        var token = jwtTokenProvider.createToken(claims.getSubject(), permissions, userId);
+        var refreshToken = jwtTokenProvider.createRefreshToken(claims.getSubject(), permissions, userId);
+        return new LoginResponseDTO(token, refreshToken);
+    }
+
+    private void isValid(String refresh) {
+        Jws<Claims> claims;
+        try {
+            claims = readToken(refresh);
+        } catch (Exception e) {
+            throw new InvalidJwtAuthenticationException("Não foi possível interpretar o token informado!");
+        }
+        if (SignatureAlgorithm.valueOf(claims.getHeader().getAlgorithm()) != SignatureAlgorithm.HS256)
+            throw new InvalidJwtAuthenticationException(String.format("O algoritmo %s não era esperado", claims.getHeader().getAlgorithm()));
+        try {
+            claims.getBody().get("user", Long.class);
+        } catch (Exception ignore) {
+            throw new InvalidJwtAuthenticationException("Usuário não informado");
+        }
+        try {
+            claims.getBody().get("permissions", List.class);
+        } catch (Exception ignore) {
+            throw new InvalidJwtAuthenticationException("Lista de permissões não informada");
+        }
+        if (Instant.now().isAfter(claims.getBody().getExpiration().toInstant())) {
+            throw new InvalidJwtAuthenticationException("Token está expirado");
+        }
     }
 }

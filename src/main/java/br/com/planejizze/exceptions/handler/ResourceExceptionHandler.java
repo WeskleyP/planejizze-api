@@ -28,7 +28,7 @@ public class ResourceExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
     }
 
-    @ExceptionHandler({ComprovanteException.class, DifferentPasswordException.class,
+    @ExceptionHandler({ComprovanteException.class, DifferentPasswordException.class, PlanejamentoInvalidDate.class,
             EmailExistsException.class, EmailNotVerifiedException.class, BadParamsException.class})
     public ResponseEntity<StandardError> badRequest(RuntimeException e, HttpServletRequest request) {
         StandardError err = new StandardError(HttpStatus.BAD_REQUEST.value(), e.getMessage(),

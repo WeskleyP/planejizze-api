@@ -1,6 +1,6 @@
 package br.com.planejizze.model.pk;
 
-import br.com.planejizze.model.CategoriaPlanejamento;
+import br.com.planejizze.model.CategoriaDespesa;
 import br.com.planejizze.model.Planejamento;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
@@ -30,6 +30,6 @@ public class PlanejamentoCategoriaPK implements Serializable {
     @JsonIdentityReference(alwaysAsId = true)
     private Planejamento planejamento;
     @ManyToOne
-    @JoinColumn(name = "categoria_id", foreignKey = @ForeignKey(name = "planejamento_categoria_categoria_planejamento_fkey"))
-    private CategoriaPlanejamento categoriaPlanejamento;
+    @JoinColumn(name = "categoria_id", foreignKey = @ForeignKey(name = "planejamento_categoria_categoria_despesa_fkey"))
+    private CategoriaDespesa categoriaDespesa;
 }

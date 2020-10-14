@@ -10,6 +10,7 @@ import br.com.planejizze.service.ReceitaService;
 import br.com.planejizze.utils.TokenUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,30 +34,35 @@ public class ReceitaResource extends AbstractResource<Receita, Long, ReceitaRepo
         this.receitaService = service;
     }
 
+    @ApiOperation("Busca as receitas do últimos 30 dias")
     @PreAuthorize(value = "hasPermission(#this.this.class.simpleName, 'read')")
     @GetMapping(path = "/last30Days")
     public ResponseEntity<Receita30DayDTO> findReceitasLast30Days(HttpServletRequest request) {
         return ResponseEntity.ok(receitaService.findReceitasLast30Days(TokenUtils.from(request).getUserId()));
     }
 
+    @ApiOperation("Busca as receitas do próximos 30 dias")
     @PreAuthorize(value = "hasPermission(#this.this.class.simpleName, 'read')")
     @GetMapping(path = "/next30Days")
     public ResponseEntity<Receita30DayDTO> findReceitasNext30Days(HttpServletRequest request) {
         return ResponseEntity.ok(receitaService.findReceitasNext30Days(TokenUtils.from(request).getUserId()));
     }
 
+    @ApiOperation("Busca a próxima despesa a receber")
     @PreAuthorize(value = "hasPermission(#this.this.class.simpleName, 'read')")
     @GetMapping(path = "/next")
     public ResponseEntity<Receita30DayDTO> findNextReceita(HttpServletRequest request) {
         return ResponseEntity.ok(receitaService.findNextReceita(TokenUtils.from(request).getUserId()));
     }
 
+    @ApiOperation("Busca as receitas do ultimos 6 meses")
     @PreAuthorize(value = "hasPermission(#this.this.class.simpleName, 'read')")
     @GetMapping(path = "/last6Months")
     public ResponseEntity<List<Receita6MonthsDTO>> findReceitasLast6Months(HttpServletRequest request) throws JsonProcessingException {
         return ResponseEntity.ok(receitaService.findReceitasLast6Months(TokenUtils.from(request).getUserId()));
     }
 
+    @ApiOperation("Busca as receitas agrupadas por categoria e por determinado mes")
     @PreAuthorize(value = "hasPermission(#this.this.class.simpleName, 'read')")
     @GetMapping(path = "/byCategoria")
     public ResponseEntity<List<ReceitaPorCategoriaDTO>> porCategoriaEMês(HttpServletRequest request,

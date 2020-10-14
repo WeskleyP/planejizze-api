@@ -17,13 +17,16 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
     @Value("${security.jwt.token.secret-key}")
     private String secretKey;
     @Value("${security.jwt.token.expire-length}")
-    private Long validityInMilliseconds;
+    private Long validityInMillisecondsToken;
+    @Value("${security.jwt.token.refresh-expire-length}")
+    private Long validityInMillisecondsRefreshToken;
     @Qualifier("customUserDetailsService")
     @Autowired
     private UserDetailsService userDetailsService;
@@ -34,10 +37,15 @@ public class JwtTokenProvider {
     }
 
     public String createToken(String username, List<Role> roles, Long userId) {
+        return getTokens(username, roles, userId, validityInMillisecondsToken);
+    }
+
+    private String getTokens(String username, List<Role> roles, Long userId, Long validityInMillisecondsToken) {
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("user", userId);
+        claims.put("permissions", roles.stream().map(Role::getPermissions).collect(Collectors.toList()));
         Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds);
+        Date validity = new Date(now.getTime() + validityInMillisecondsToken);
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
@@ -70,5 +78,9 @@ public class JwtTokenProvider {
         } catch (JwtException | IllegalArgumentException e) {
             throw new InvalidJwtAuthenticationException("Expired or invalid JWT token");
         }
+    }
+
+    public String createRefreshToken(String email, List<Role> roles, Long id) {
+        return getTokens(email, roles, id, validityInMillisecondsRefreshToken);
     }
 }

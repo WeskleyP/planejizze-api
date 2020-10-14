@@ -1,6 +1,7 @@
 package br.com.planejizze.service;
 
 import br.com.planejizze.exceptions.NotFoundException;
+import br.com.planejizze.exceptions.PlanejamentoInvalidDate;
 import br.com.planejizze.model.Planejamento;
 import br.com.planejizze.model.PlanejamentoCategoria;
 import br.com.planejizze.model.Usuario;
@@ -25,11 +26,20 @@ public class PlanejamentoService extends AbstractService<Planejamento, Long, Pla
 
     @Override
     public Planejamento save(Planejamento entity, HttpServletRequest request) {
+        if (repo.findPlanejamentoIdFromDate(TokenUtils.from(request).getUserId(),
+                entity.getDataInicio(), entity.getDataFim()) == null){
+            throw new PlanejamentoInvalidDate("Você já possui um planejamento no periodo selecionado");
+        }
         return getPlanejamento(entity, request);
     }
 
     @Override
     public Planejamento update(Planejamento entity, HttpServletRequest request) {
+        var planId = repo.findPlanejamentoIdFromDate(TokenUtils.from(request).getUserId(),
+                entity.getDataInicio(), entity.getDataFim());
+        if (planId == null || !planId.equals(entity.getId())){
+            throw new PlanejamentoInvalidDate("Você já possui um planejamento no periodo selecionado");
+        }
         return getPlanejamento(entity, request);
     }
 
@@ -43,7 +53,7 @@ public class PlanejamentoService extends AbstractService<Planejamento, Long, Pla
         List<PlanejamentoCategoria> planejamentoCategoria = new ArrayList<>();
         for (PlanejamentoCategoria categoria : entity.getCategorias()) {
             PlanejamentoCategoria pl = new PlanejamentoCategoria(new PlanejamentoCategoriaPK(
-                    plan, categoria.getPlanejamentoCategoriaPK().getCategoriaPlanejamento()),
+                    plan, categoria.getPlanejamentoCategoriaPK().getCategoriaDespesa()),
                     categoria.getValorMaximoGasto());
             planejamentoCategoria.add(pl);
         }
