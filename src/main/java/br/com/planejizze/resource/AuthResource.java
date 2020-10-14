@@ -66,11 +66,13 @@ public class AuthResource {
         }
     }
 
+    @ApiOperation("Gerar um token e refresh token a partir de um refresh token")
     @PostMapping(path = "/refreshToken")
     public ResponseEntity<LoginResponseDTO> refreshToken(@RequestBody RefreshTokenDTO refreshTokenDTO) {
         return ResponseEntity.ok(authService.refreshToken(refreshTokenDTO.getRefreshToken()));
     }
 
+    @ApiOperation("Dar um 'clarify' no token")
     @PostMapping(path = "/readToken")
     public ResponseEntity<Jws<Claims>> readToken(@RequestBody TokenDTO tokenDTO) {
         return ResponseEntity.ok(authService.readToken(tokenDTO.getToken()));

@@ -1,6 +1,7 @@
 package br.com.planejizze.repository;
 
 import br.com.planejizze.model.Despesa;
+import br.com.planejizze.model.Receita;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -47,4 +48,7 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long> {
             "where extract (month from d.data_despesa) = ?2 " +
             "and d.usuario_id = ?1 group by cr.id, d.data_despesa", nativeQuery = true)
     List<String> findDespesasPorCategoriaEMes(Long userId, Long mes);
+
+    @Query("select d from Despesa d where d.statusDespesa = 1")
+    List<Despesa> findAllWhereStatusIsApagar();
 }
