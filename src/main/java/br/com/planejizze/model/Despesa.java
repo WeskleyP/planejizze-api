@@ -1,16 +1,20 @@
 package br.com.planejizze.model;
 
-import br.com.planejizze.enums.StatusDespesa;
+import br.com.planejizze.utils.Constants;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -18,7 +22,9 @@ import java.util.Date;
 @Table(name = "despesa")
 @Data
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE despesa SET ativo = false WHERE id = ?")
 @SequenceGenerator(name = "despesa_sequence", sequenceName = "despesa_sequence_pkey", allocationSize = 1)
+@Where(clause = Constants.ATIVO)
 public class Despesa {
     @Id
     @EqualsAndHashCode.Include
@@ -35,17 +41,18 @@ public class Despesa {
     @Temporal(TemporalType.DATE)
     @Column(name = "data_despesa")
     private Date dataDespesa;
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "status_despesa")
-    private StatusDespesa statusDespesa;
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
-    @JsonFormat(pattern = "dd/MM/yyyy")
-    @Temporal(TemporalType.DATE)
-    @Column(name = "data_vencimento")
-    private Date dataVencimento;
     @Column(name = "despesa_fixa", columnDefinition = "boolean default false")
     @NotNull(message = "A opção de despesa fixa não dever ser nula!")
     private Boolean despesaFixa;
+    @JsonIgnore
+    @Column(name = "ativo", nullable = false, columnDefinition = "boolean default true")
+    private Boolean ativo = true;
+    @CreationTimestamp
+    @Column(name = "created_on")
+    private LocalDateTime createdOn;
+    @UpdateTimestamp
+    @Column(name = "updated_on")
+    private LocalDateTime updatedOn;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "despesa")
     private TipoPagamento tipoPagamento;

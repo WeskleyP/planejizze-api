@@ -14,10 +14,9 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class JwtTokenProvider {
@@ -43,7 +42,7 @@ public class JwtTokenProvider {
     private String getTokens(String username, List<Role> roles, Long userId, Long validityInMillisecondsToken) {
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("user", userId);
-        claims.put("permissions", roles.stream().map(Role::getPermissions).collect(Collectors.toList()));
+        claims.put("permissions", getResumedRoles(roles));
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMillisecondsToken);
         return Jwts.builder()
@@ -52,6 +51,22 @@ public class JwtTokenProvider {
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
+    }
+
+    private Role getResumedRoles(List<Role> roles) {
+        List<Map<String, Map<String, Boolean>>> test = roles
+                .stream().map(teste1 -> (Map<String, Map<String, Boolean>>) teste1)
+                .collect(Collectors.toList());
+        Optional<Map<String, Map<String, Boolean>>> last = test.stream()
+                .reduce((firstMap, secondMap) ->
+                        Stream.concat(firstMap.entrySet().stream(), secondMap.entrySet().stream())
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                                (countInFirstMap, countInSecondMap) -> {
+                                    countInFirstMap.forEach((key, value) ->
+                                            countInSecondMap.merge(key, value, (v1, v2) -> v1.equals(true) || v2));
+                                    return countInSecondMap;
+                                })));
+        return (Role) last.get();
     }
 
     public Authentication getAuthentication(String token) {

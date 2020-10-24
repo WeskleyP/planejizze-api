@@ -28,30 +28,30 @@ public class ScheduleService {
     @Scheduled(cron = "0 0 0/6 1/1 * ?")
     public void validaçãoDeStatusDeReceita() {
         logger.info("Iniciando validação de status de todas as receitas");
-        var receitas = receitaRepository.findAllWhereStatusIsAreceber().stream()
-                .filter(receita -> receita.getStatusReceita().equals(StatusReceita.A_RECEBER))
-                .collect(Collectors.toList());
-        for (var r : receitas) {
-            if (r.getDataRecebimento().toInstant().isAfter(Instant.now().plus(12, ChronoUnit.HOURS))) {
-                r.setStatusReceita(StatusReceita.ATRASADA);
-            }
-        }
-        receitaRepository.saveAll(receitas);
+//        var receitas = receitaRepository.findAllWhereStatusIsAreceber().stream()
+//                .filter(receita -> receita.getStatusReceita().equals(StatusReceita.A_RECEBER))
+//                .collect(Collectors.toList());
+//        for (var r : receitas) {
+//            if (r.getDataRecebimento().toInstant().isAfter(Instant.now().plus(12, ChronoUnit.HOURS))) {
+//                r.setStatusReceita(StatusReceita.ATRASADA);
+//            }
+//        }
+//        receitaRepository.saveAll(receitas);
         logger.info("Finalizando validação de status de todas as receitas");
     }
 
     @Scheduled(cron = "0 0 0/6 1/1 * ?")
     public void validaçãoDeStatusDeDespesa() {
         logger.info("Iniciando validação de status de todas as despesas");
-        var despesas = despesaRepository.findAllWhereStatusIsApagar().stream()
-                .filter(receita -> receita.getStatusDespesa().equals(StatusDespesa.A_PAGAR))
-                .collect(Collectors.toList());
-        for (var r : despesas) {
-            if (r.getDataVencimento().toInstant().isAfter(Instant.now().plus(12, ChronoUnit.HOURS))) {
-                r.setStatusDespesa(StatusDespesa.PAGO);
-            }
-        }
-        despesaRepository.saveAll(despesas);
+//        var despesas = despesaRepository.findAllWhereStatusIsApagar().stream()
+//                .filter(receita -> receita.getStatusDespesa().equals(StatusDespesa.A_PAGAR))
+//                .collect(Collectors.toList());
+//        for (var r : despesas) {
+//            if (r.getDataVencimento().toInstant().isAfter(Instant.now().plus(12, ChronoUnit.HOURS))) {
+//                r.setStatusDespesa(StatusDespesa.PAGO);
+//            }
+//        }
+//        despesaRepository.saveAll(despesas);
         logger.info("Finalizando validação de status de todas as despesas");
     }
 }

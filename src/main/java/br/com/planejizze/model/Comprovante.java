@@ -32,6 +32,6 @@ public class Comprovante {
     private Long expire;
     @Column(name = "requested_at")
     private Long requestedAt;
-    @Column(name = "active")
-    private Boolean active;
+    @Column(name = "ativo")
+    private Boolean ativo;
 }

@@ -3,12 +3,16 @@ package br.com.planejizze.model;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Table(name = "tipo_pagamento_dinheiro")
 @Entity
 @JsonTypeName("pagamentoComDinheiro")
@@ -20,4 +24,9 @@ public class TipoPagamentoMoeda extends TipoPagamento {
 
     @Column(name = "moeda")
     private String moeda;
+    @Column(name = "dia_pagamento")
+    private String diaPagamento;
+    @Fetch(FetchMode.SELECT)
+    @OneToMany(mappedBy = "tipoPagamentoMoeda", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<TipoPagamentoMoedaLog> tipoPagamentoMoedaLogs = new ArrayList<>();
 }

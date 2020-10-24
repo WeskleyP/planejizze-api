@@ -6,12 +6,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -19,7 +23,9 @@ import java.util.Date;
 @Table(name = "cartao")
 @Data
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE cartao SET ativo = false WHERE id = ?")
 @SequenceGenerator(name = "cartao_sequence", sequenceName = "cartao_sequence_pkey", allocationSize = 1)
+@Where(clause = Constants.ATIVO)
 public class Cartao {
 
     @Id
@@ -44,6 +50,15 @@ public class Cartao {
     @Temporal(TemporalType.DATE)
     @Column(name = "data_vencimento")
     private Date dataVencimento;
+    @JsonIgnore
+    @Column(name = "ativo", nullable = false, columnDefinition = "boolean default true")
+    private Boolean ativo = true;
+    @CreationTimestamp
+    @Column(name = "created_on")
+    private LocalDateTime createdOn;
+    @UpdateTimestamp
+    @Column(name = "updated_on")
+    private LocalDateTime updatedOn;
 
     @JsonIgnore
     @ManyToOne

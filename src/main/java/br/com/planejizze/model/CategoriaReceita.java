@@ -5,20 +5,23 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.time.LocalDateTime;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "categoria_receita")
 @Data
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE categoria_receita SET active = false WHERE id = ?")
+@SQLDelete(sql = "UPDATE categoria_receita SET ativo = false WHERE id = ?")
 @Where(clause = Constants.ATIVO)
 @SequenceGenerator(name = "categoria_receita_sequence", sequenceName = "categoria_receita_sequence_pkey", initialValue = 30, allocationSize = 1)
 public class CategoriaReceita {
@@ -36,8 +39,14 @@ public class CategoriaReceita {
     @Pattern(regexp = "/[0-9a-fA-F]+/", message = "Cor inváilida!")
     private String cor;
     @JsonIgnore
-    @Column(name = "active", columnDefinition = "boolean default true", nullable = false)
-    private Boolean isActive = true;
+    @Column(name = "ativo", nullable = false, columnDefinition = "boolean default true")
+    private Boolean ativo = true;
+    @CreationTimestamp
+    @Column(name = "created_on")
+    private LocalDateTime createdOn;
+    @UpdateTimestamp
+    @Column(name = "updated_on")
+    private LocalDateTime updatedOn;
 
     @JsonIgnore
     @ManyToOne

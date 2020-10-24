@@ -23,7 +23,7 @@ public class CadastroCategoriaDespesaIT {
         // cenário
         CategoriaDespesa categoriaDespesa = new CategoriaDespesa();
         categoriaDespesa.setNome("Teste");
-        categoriaDespesa.setIsActive(true);
+        categoriaDespesa.setAtivo(true);
         // ação
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
         mockHttpServletRequest.addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3ZXNrbGV5cGVkcm9AZ21haWwuY29tIiwidXNlciI6MSwiaWF0IjoxNjAwODE1Nzk1LCJleHAiOjE2MDQ0MTU3OTV9.2t_RL_rYn3dY8SCbJ0879nhpUbuvhk_-WuYR-mJgg-Y");
@@ -38,7 +38,7 @@ public class CadastroCategoriaDespesaIT {
         // cenário
         CategoriaDespesa categoriaDespesa = new CategoriaDespesa();
         categoriaDespesa.setNome(null);
-        categoriaDespesa.setIsActive(true);
+        categoriaDespesa.setAtivo(true);
         // ação
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
         mockHttpServletRequest.addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3ZXNrbGV5cGVkcm9AZ21haWwuY29tIiwidXNlciI6MSwiaWF0IjoxNjAwODE1Nzk1LCJleHAiOjE2MDQ0MTU3OTV9.2t_RL_rYn3dY8SCbJ0879nhpUbuvhk_-WuYR-mJgg-Y");

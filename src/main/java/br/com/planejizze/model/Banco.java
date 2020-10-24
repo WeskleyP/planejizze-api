@@ -1,19 +1,27 @@
 package br.com.planejizze.model;
 
 import br.com.planejizze.enums.TipoConta;
+import br.com.planejizze.utils.Constants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "banco")
 @Data
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE banco SET ativo = false WHERE id = ?")
 @SequenceGenerator(name = "banco_sequence", sequenceName = "banco_sequence_pkey", allocationSize = 1)
+@Where(clause = Constants.ATIVO)
 public class Banco {
 
     @Id
@@ -28,6 +36,15 @@ public class Banco {
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "tipo_conta")
     private TipoConta tipoConta;
+    @JsonIgnore
+    @Column(name = "ativo", nullable = false, columnDefinition = "boolean default true")
+    private Boolean ativo = true;
+    @CreationTimestamp
+    @Column(name = "created_on")
+    private LocalDateTime createdOn;
+    @UpdateTimestamp
+    @Column(name = "updated_on")
+    private LocalDateTime updatedOn;
 
     @JsonIgnore
     @ManyToOne

@@ -49,6 +49,6 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long> {
             "and d.usuario_id = ?1 group by cr.id, d.data_despesa", nativeQuery = true)
     List<String> findDespesasPorCategoriaEMes(Long userId, Long mes);
 
-    @Query("select d from Despesa d where d.statusDespesa = 1")
-    List<Despesa> findAllWhereStatusIsApagar();
+//    @Query("select d from Despesa d where d.statusDespesa = 1")
+//    List<Despesa> findAllWhereStatusIsApagar();
 }

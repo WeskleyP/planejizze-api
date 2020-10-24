@@ -48,6 +48,6 @@ public interface ReceitaRepository extends JpaRepository<Receita, Long> {
             "and r.usuario_id = ?1 group by cr.id, r.data_recebimento", nativeQuery = true)
     List<String> findReceitasPorCategoriaEMes(Long userId, Long mes);
 
-    @Query("select r from Receita r where r.statusReceita = 1")
-    List<Receita> findAllWhereStatusIsAreceber();
+//    @Query("select r from Receita r where r.statusReceita = 1")
+//    List<Receita> findAllWhereStatusIsAreceber();
 }

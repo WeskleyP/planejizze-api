@@ -6,10 +6,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -47,6 +50,15 @@ public class Planejamento {
     @Temporal(TemporalType.DATE)
     @Column(name = "data_fim")
     private Date dataFim;
+    @JsonIgnore
+    @Column(name = "ativo", nullable = false, columnDefinition = "boolean default true")
+    private Boolean ativo = true;
+    @CreationTimestamp
+    @Column(name = "created_on")
+    private LocalDateTime createdOn;
+    @UpdateTimestamp
+    @Column(name = "updated_on")
+    private LocalDateTime updatedOn;
 
     @JsonIgnore
     @ManyToOne

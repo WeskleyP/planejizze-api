@@ -70,7 +70,7 @@ public class AuthService {
         user.setContraSenha(passwordEncoder.encode(registerDTO.getSenhaConfirmação()));
         user.setEmail(registerDTO.getEmail());
         user.setUsername(registerDTO.getUsername());
-        user.setIsActive(true);
+        user.setAtivo(true);
         user.setEmailVerified(false);
         user.setRoles(Collections.singletonList(roleRepository.findById(1L).get()));
         var usuario = new Usuario();
@@ -98,7 +98,7 @@ public class AuthService {
         var date = Instant.now().toEpochMilli() / 1000L;
         var comprovante =
                 Comprovante.builder()
-                        .setActive(true)
+                        .setAtivo(true)
                         .setRequestedAt(date)
                         .setUser(usuario)
                         .setUuid(token)
@@ -187,7 +187,7 @@ public class AuthService {
         user.setSenha(password);
         usuarioRepository.save(user);
         var comprovante = comprovanteRepository.findById(token).get();
-        comprovante.setActive(false);
+        comprovante.setAtivo(false);
         comprovanteRepository.save(comprovante);
     }
 

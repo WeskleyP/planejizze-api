@@ -1,10 +1,13 @@
 package br.com.planejizze.model;
 
 import br.com.planejizze.utils.Constants;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,6 +17,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,7 +29,7 @@ import static java.util.stream.Collectors.toList;
 @Table(name = "usuario")
 @Data
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE usuario SET active = false WHERE id = ?")
+@SQLDelete(sql = "UPDATE usuario SET ativo = false WHERE id = ?")
 @Where(clause = Constants.ATIVO)
 @SequenceGenerator(name = "usuario_sequence", sequenceName = "usuario_sequence_pkey", allocationSize = 1)
 public class Usuario implements UserDetails {
@@ -61,8 +65,15 @@ public class Usuario implements UserDetails {
     private String senha;
     @Transient
     private String contraSenha;
-    @Column(name = "active", columnDefinition = "boolean default true", nullable = false)
-    private Boolean isActive;
+    @JsonIgnore
+    @Column(name = "ativo", nullable = false, columnDefinition = "boolean default true")
+    private Boolean ativo = true;
+    @CreationTimestamp
+    @Column(name = "created_on")
+    private LocalDateTime createdOn;
+    @UpdateTimestamp
+    @Column(name = "updated_on")
+    private LocalDateTime updatedOn;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "usuario_role",
             joinColumns = @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "usuario_role_usuario_fkey")),
@@ -98,6 +109,6 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return this.isActive;
+        return this.ativo;
     }
 }

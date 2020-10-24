@@ -28,7 +28,7 @@ spring:
         format-sql: true
         show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
   mail:
     host: smtp.gmail.com
     username: ${SMTP_EMAIL}
