@@ -1,5 +1,6 @@
 package br.com.planejizze.service;
 
+import br.com.planejizze.dto.PlanejamentoDropdownDTO;
 import br.com.planejizze.exceptions.NotFoundException;
 import br.com.planejizze.exceptions.PlanejamentoInvalidDate;
 import br.com.planejizze.model.Planejamento;
@@ -48,8 +49,7 @@ public class PlanejamentoService extends AbstractService<Planejamento, Long, Pla
         usuario.setId(TokenUtils.from(request).getUserId());
         entity.setUsuario(usuario);
         Planejamento plan = repo.save(new Planejamento(entity.getId(), entity.getDescricao(), entity.getAlertaPorcentagem(),
-                entity.getReceitaTotal(), entity.getMetaGastos(), entity.getDataInicio(),
-                entity.getDataFim(), entity.getUsuario()));
+                entity.getMetaGastos(), entity.getDataInicio(), entity.getDataFim(), entity.getUsuario()));
         List<PlanejamentoCategoria> planejamentoCategoria = new ArrayList<>();
         for (PlanejamentoCategoria categoria : entity.getCategorias()) {
             PlanejamentoCategoria pl = new PlanejamentoCategoria(new PlanejamentoCategoriaPK(
@@ -75,5 +75,9 @@ public class PlanejamentoService extends AbstractService<Planejamento, Long, Pla
     public Planejamento findById(Long aLong, HttpServletRequest request) throws NotFoundException {
         return repo.findByIdAndUsuarioIdOrUsuarioIsNull(aLong, TokenUtils.from(request).getUserId())
                 .orElseThrow(() -> new NotFoundException("Dados não encontrados! Id: " + aLong));
+    }
+
+    public List<PlanejamentoDropdownDTO> findAllDropdown(Long userId) {
+        return repo.findAllDropdown(userId);
     }
 }

@@ -115,4 +115,10 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long> {
             "	and extract (month from tpml.data_pagamento_experada) = ?2 ))" +
             "group by cd.id", nativeQuery = true)
     List<String> findDespesasPorCategoriaEMes(Long userId, Long mes);
+
+    @Query("select distinct d from Despesa d " +
+            "left join TipoPagamentoCartaoParcelas tpcp on tpcp.tipoPagamentoCartao.id = d.tipoPagamento.id " +
+            "left join TipoPagamentoMoedaLog tpml on tpml.tipoPagamentoMoeda.id = d.tipoPagamento.id " +
+            "where (tpcp.statusDespesa = 1 or tpml.statusDespesa = 1)")
+    List<Despesa> findAllWhereStatusIsApagar();
 }

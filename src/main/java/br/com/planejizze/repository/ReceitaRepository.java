@@ -115,4 +115,10 @@ public interface ReceitaRepository extends JpaRepository<Receita, Long> {
             "	and extract (month from trml.data_recebimento_experada) = ?2 ))" +
             "group by cr.id", nativeQuery = true)
     List<String> findReceitasPorCategoriaEMes(Long userId, Long mes);
+
+    @Query("select distinct r from Receita r " +
+            "left join TipoRecebimentoBancoLog trbl on trbl.tipoRecebimentoBanco.id = r.tipoRecebimento.id " +
+            "left join TipoRecebimentoMoedaLog trml on trml.tipoRecebimentoMoeda.id = r.tipoRecebimento.id " +
+            "where (trbl.statusReceita = 1 or trml.statusReceita = 1)")
+    List<Receita> findAllWhereStatusIsAreceber();
 }

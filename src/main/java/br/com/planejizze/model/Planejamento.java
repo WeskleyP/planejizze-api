@@ -1,6 +1,6 @@
 package br.com.planejizze.model;
 
-
+import br.com.planejizze.utils.Constants;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -24,6 +25,7 @@ import java.util.List;
 @NoArgsConstructor
 @SequenceGenerator(name = "planejamento_sequence", sequenceName = "planejamento_sequence_pkey", allocationSize = 1)
 @JsonIgnoreProperties({"createdOn", "updatedOn"})
+@Where(clause = Constants.ATIVO)
 public class Planejamento {
     @Id
     @EqualsAndHashCode.Include
@@ -34,9 +36,6 @@ public class Planejamento {
     private String descricao;
     @Column(name = "alerta_porcentagem")
     private Long alertaPorcentagem;
-    @Column(name = "receita_total")
-    @NotNull(message = "A receita total não dever ser nulo!")
-    private Double receitaTotal;
     @Column(name = "meta_gastos")
     @NotNull(message = "A meta de gastos não dever ser nulo!")
     private Double metaGastos;
@@ -71,14 +70,12 @@ public class Planejamento {
     private List<PlanejamentoCategoria> categorias;
 
     public Planejamento(Long id, String descricao, Long alertaPorcentagem,
-                        @NotNull(message = "A receita total não dever ser nulo!") Double receitaTotal,
                         @NotNull(message = "A meta de gastos não dever ser nulo!") Double metaGastos,
                         @NotNull(message = "A data inicial não dever ser nulo!") Date dataInicio,
                         @NotNull(message = "A data final não dever ser nulo!") Date dataFim, Usuario usuario) {
         this.id = id;
         this.descricao = descricao;
         this.alertaPorcentagem = alertaPorcentagem;
-        this.receitaTotal = receitaTotal;
         this.metaGastos = metaGastos;
         this.dataInicio = dataInicio;
         this.dataFim = dataFim;
