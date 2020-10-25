@@ -27,7 +27,7 @@ public class PlanejamentoService extends AbstractService<Planejamento, Long, Pla
     @Override
     public Planejamento save(Planejamento entity, HttpServletRequest request) {
         if (repo.findPlanejamentoIdFromDate(TokenUtils.from(request).getUserId(),
-                entity.getDataInicio(), entity.getDataFim()) == null){
+                entity.getDataInicio(), entity.getDataFim()) != null) {
             throw new PlanejamentoInvalidDate("Você já possui um planejamento no periodo selecionado");
         }
         return getPlanejamento(entity, request);
@@ -37,7 +37,7 @@ public class PlanejamentoService extends AbstractService<Planejamento, Long, Pla
     public Planejamento update(Planejamento entity, HttpServletRequest request) {
         var planId = repo.findPlanejamentoIdFromDate(TokenUtils.from(request).getUserId(),
                 entity.getDataInicio(), entity.getDataFim());
-        if (planId == null || !planId.equals(entity.getId())){
+        if (planId == null || !planId.equals(entity.getId())) {
             throw new PlanejamentoInvalidDate("Você já possui um planejamento no periodo selecionado");
         }
         return getPlanejamento(entity, request);

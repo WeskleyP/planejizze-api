@@ -27,7 +27,7 @@ public class TipoRecebimentoBanco extends TipoRecebimento {
     private Banco banco;
     @Column(name = "dia_pagamento")
     private String diaPagamento;
-    @Fetch(FetchMode.SELECT)
+    @Fetch(FetchMode.SUBSELECT)
     @OneToMany(mappedBy = "tipoRecebimentoBanco", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<TipoRecebimentoBancoLog> tipoRecebimentoBancoLogs = new ArrayList<>();
 }

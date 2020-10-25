@@ -2,6 +2,7 @@ package br.com.planejizze.model;
 
 import br.com.planejizze.utils.Constants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 @SQLDelete(sql = "UPDATE receita SET ativo = false WHERE id = ?")
 @SequenceGenerator(name = "receita_sequence", sequenceName = "receita_sequence_pkey", allocationSize = 1)
 @Where(clause = Constants.ATIVO)
+@JsonIgnoreProperties({"createdOn", "updatedOn"})
 public class Receita {
 
     @Id

@@ -4,8 +4,7 @@ import br.com.planejizze.dto.Receita30DayDTO;
 import br.com.planejizze.dto.Receita6MonthsDTO;
 import br.com.planejizze.dto.ReceitaPorCategoriaDTO;
 import br.com.planejizze.exceptions.NotFoundException;
-import br.com.planejizze.model.Receita;
-import br.com.planejizze.model.Usuario;
+import br.com.planejizze.model.*;
 import br.com.planejizze.repository.ReceitaRepository;
 import br.com.planejizze.utils.TokenUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,19 +27,26 @@ public class ReceitaService extends AbstractService<Receita, Long, ReceitaReposi
 
     @Override
     public Receita save(Receita entity, HttpServletRequest request) {
-        Usuario usuario = new Usuario();
-        usuario.setId(TokenUtils.from(request).getUserId());
-        entity.setUsuario(usuario);
-        entity.getTipoRecebimento().setReceita(entity);
-        return repo.save(entity);
+        return getReceita(entity, request);
     }
 
     @Override
     public Receita update(Receita entity, HttpServletRequest request) {
+        return getReceita(entity, request);
+    }
+
+    private Receita getReceita(Receita entity, HttpServletRequest request) {
         Usuario usuario = new Usuario();
         usuario.setId(TokenUtils.from(request).getUserId());
         entity.setUsuario(usuario);
         entity.getTipoRecebimento().setReceita(entity);
+        if (entity.getTipoRecebimento() instanceof TipoRecebimentoBanco) {
+            ((TipoRecebimentoBanco) entity.getTipoRecebimento()).getTipoRecebimentoBancoLogs()
+                    .forEach(tipoRecebimentoBancoLog -> tipoRecebimentoBancoLog.setTipoRecebimentoBanco((TipoRecebimentoBanco) entity.getTipoRecebimento()));
+        } else if (entity.getTipoRecebimento() instanceof TipoRecebimentoMoeda) {
+            ((TipoRecebimentoMoeda) entity.getTipoRecebimento()).getTipoRecebimentoMoedaLogs()
+                    .forEach(tipoRecebimentoMoedaLog -> tipoRecebimentoMoedaLog.setTipoRecebimentoMoeda((TipoRecebimentoMoeda) entity.getTipoRecebimento()));
+        }
         return repo.save(entity);
     }
 

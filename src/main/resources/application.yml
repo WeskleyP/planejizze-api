@@ -28,7 +28,7 @@ spring:
         format-sql: true
         show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   mail:
     host: smtp.gmail.com
     username: ${SMTP_EMAIL}
@@ -55,8 +55,8 @@ security:
   jwt:
     token:
       secret-key: "Chave secreta para ser utilizada na api"
-      expire-length: 86400
-      refresh-expire-length: 604800
+      expire-length: 86400000
+      refresh-expire-length: 604800000
 default:
   sender: weskleypedro@gmail.com
   dns: http://localhost:5555

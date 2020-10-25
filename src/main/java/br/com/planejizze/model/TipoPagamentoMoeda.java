@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "tipo_pagamento_dinheiro")
+@Table(name = "tipo_pagamento_moeda")
 @Entity
 @JsonTypeName("pagamentoComDinheiro")
 @Data
@@ -26,7 +26,7 @@ public class TipoPagamentoMoeda extends TipoPagamento {
     private String moeda;
     @Column(name = "dia_pagamento")
     private String diaPagamento;
-    @Fetch(FetchMode.SELECT)
+    @Fetch(FetchMode.SUBSELECT)
     @OneToMany(mappedBy = "tipoPagamentoMoeda", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<TipoPagamentoMoedaLog> tipoPagamentoMoedaLogs = new ArrayList<>();
 }

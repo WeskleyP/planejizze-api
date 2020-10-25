@@ -2,6 +2,7 @@ package br.com.planejizze.model;
 
 import br.com.planejizze.utils.Constants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -32,6 +33,7 @@ import static java.util.stream.Collectors.toList;
 @SQLDelete(sql = "UPDATE usuario SET ativo = false WHERE id = ?")
 @Where(clause = Constants.ATIVO)
 @SequenceGenerator(name = "usuario_sequence", sequenceName = "usuario_sequence_pkey", allocationSize = 1)
+@JsonIgnoreProperties({"createdOn", "updatedOn"})
 public class Usuario implements UserDetails {
 
     private static final long serialVersionUID = 8815680579773416488L;

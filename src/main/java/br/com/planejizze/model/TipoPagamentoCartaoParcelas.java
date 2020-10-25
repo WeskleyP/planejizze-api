@@ -47,4 +47,9 @@ public class TipoPagamentoCartaoParcelas {
     @Temporal(TemporalType.DATE)
     @Column(name = "data_pagamento_real")
     private Date dataPagamentoReal;
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    @Temporal(TemporalType.DATE)
+    @Column(name = "data_pagamento_experada")
+    private Date dataPagamentoExperada;
 }

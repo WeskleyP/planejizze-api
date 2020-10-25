@@ -1,7 +1,6 @@
 package br.com.planejizze.repository;
 
 import br.com.planejizze.model.Despesa;
-import br.com.planejizze.model.Receita;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,35 +19,100 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long> {
 
     Optional<Despesa> findByIdAndUsuarioIdOrUsuarioIsNull(Long id, Long userId);
 
-    @Query(value = "select coalesce(sum(d.valor), 0) from despesa d where d.usuario_id = ?1 and d.status_despesa = 0 " +
-            "and d.data_despesa < cast(now() as date) and d.data_despesa >= cast(now() as date) - 30", nativeQuery = true)
+    @Query(value = "select coalesce(sum(tpcp.valor_parcela), 0) + coalesce(sum(tpml.valor_pagamento), 0)" +
+            "from despesa d " +
+            "inner join tipo_pagamento tp on tp.despesa_id = d.id " +
+            "left join tipo_pagamento_cartao tpc on tpc.despesa_id = tp.despesa_id " +
+            "left join tipo_pagamento_cartao_parcelas tpcp on tpcp.tipo_pagamento_cartao_id = tpc.despesa_id " +
+            "left join tipo_pagamento_moeda tpm on tpm.despesa_id = tp.despesa_id " +
+            "left join tipo_pagamento_moeda_log tpml on tpml.tipo_pagamento_moeda_id = tpm.despesa_id " +
+            "where d.usuario_id = ?1 " +
+            "   and ((tpc.despesa_id is not null " +
+            "   and tpcp.tipo_pagamento_cartao_id is not null " +
+            "   and (tpcp.status_despesa = 0)" +
+            "   and tpcp.data_pagamento_real < cast(now() as date) and tpcp.data_pagamento_real >= cast(now() as date) - 30)" +
+            "or (tpm.despesa_id is not null " +
+            "   and tpml.tipo_pagamento_moeda_id is not null " +
+            "   and (tpml.status_despesa = 0)" +
+            "   and tpml.data_pagamento_real < cast(now() as date) and tpml.data_pagamento_real >= cast(now() as date) - 30))",
+            nativeQuery = true)
     Double findDespesasLast30Days(Long userId);
 
-    @Query(value = "select coalesce(sum(d.valor), 0) from despesa d where d.usuario_id = ?1 and d.status_despesa = 1 " +
-            "and ((d.data_despesa > cast(now() as date) and d.data_despesa <= cast(now() as date) + 30)" +
-            " or d.despesa_fixa = true)", nativeQuery = true)
+    @Query(value = "select coalesce(sum(tpcp.valor_parcela), 0) + coalesce(sum(tpml.valor_pagamento), 0)" +
+            "from despesa d " +
+            "inner join tipo_pagamento tp on tp.despesa_id = d.id " +
+            "left join tipo_pagamento_cartao tpc on tpc.despesa_id = tp.despesa_id " +
+            "left join tipo_pagamento_cartao_parcelas tpcp on tpcp.tipo_pagamento_cartao_id = tpc.despesa_id " +
+            "left join tipo_pagamento_moeda tpm on tpm.despesa_id = tp.despesa_id " +
+            "left join tipo_pagamento_moeda_log tpml on tpml.tipo_pagamento_moeda_id = tpm.despesa_id " +
+            "where d.usuario_id = ?1 " +
+            "   and ((tpc.despesa_id is not null " +
+            "   and tpcp.tipo_pagamento_cartao_id is not null " +
+            "   and (tpcp.status_despesa in (1,2))" +
+            "   and tpcp.data_pagamento_real > cast(now() as date) and tpcp.data_pagamento_real <= cast(now() as date) + 30)" +
+            "or (tpm.despesa_id is not null " +
+            "   and tpml.tipo_pagamento_moeda_id is not null " +
+            "   and (tpml.status_despesa in (1,2))" +
+            "   and tpml.data_pagamento_real > cast(now() as date) and tpml.data_pagamento_real <= cast(now() as date) + 30))", nativeQuery = true)
     Double findDespesasNext30Days(Long userId);
 
-    @Query(value = "select coalesce(d.valor, 0) from despesa d where d.usuario_id = 1 and d.status_despesa = 1 " +
-            "and (d.data_despesa > cast(now() as date) or d.despesa_fixa = true) order by d.data_despesa limit 1", nativeQuery = true)
+    @Query(value = "select coalesce(d.valor, 0)" +
+            "from despesa d " +
+            "inner join tipo_pagamento tp on tp.despesa_id = d.id " +
+            "left join tipo_pagamento_cartao tpc on tpc.despesa_id = tp.despesa_id " +
+            "left join tipo_pagamento_cartao_parcelas tpcp on tpcp.tipo_pagamento_cartao_id = tpc.despesa_id " +
+            "left join tipo_pagamento_moeda tpm on tpm.despesa_id = tp.despesa_id " +
+            "left join tipo_pagamento_moeda_log tpml on tpml.tipo_pagamento_moeda_id = tpm.despesa_id " +
+            "where d.usuario_id = ?1 " +
+            "and ((tpc.despesa_id is not null " +
+            "and tpcp.tipo_pagamento_cartao_id is not null " +
+            "and (tpcp.status_despesa in (1,2))" +
+            "and tpcp.data_pagamento_experada > cast(now() as date))" +
+            "or (tpm.despesa_id is not null " +
+            "and tpml.tipo_pagamento_moeda_id is not null " +
+            "and (tpml.status_despesa in (1,2))" +
+            "and tpml.data_pagamento_experada > cast(now() as date)))" +
+            "order by tpml.data_pagamento_experada, tpcp.data_pagamento_experada limit 1", nativeQuery = true)
     Double findNextDespesa(Long userId);
 
-    @Query(value = "select cast(jsonb_build_object('valor', sum(d.valor), 'categoriaId', cr.id, " +
-            "'categoriaNome', cr.nome, 'categoriaCor', cr.cor) as text) " +
+    @Query(value = "select cast(jsonb_build_object('valor', (coalesce(sum(tpcp.valor_parcela), 0) + coalesce(sum(tpml.valor_pagamento), 0)), " +
+            "'categoriaId', cd.id, 'categoriaNome', cd.nome, 'categoriaCor', cd.cor) as text) " +
             "from despesa d " +
-            "inner join categoria_despesa cr on cr.id = d.categoria_despesa_id " +
-            "where d.status_despesa = 0 and d.data_despesa >  (now() - interval '6 month') " +
-            "and d.usuario_id = ?1 group by cr.id", nativeQuery = true)
+            "inner join categoria_despesa cd on cd.id = d.categoria_despesa_id " +
+            "inner join tipo_pagamento tp on tp.despesa_id = d.id " +
+            "left join tipo_pagamento_cartao tpc on tpc.despesa_id = tp.despesa_id " +
+            "left join tipo_pagamento_cartao_parcelas tpcp on tpcp.tipo_pagamento_cartao_id = tpc.despesa_id " +
+            "left join tipo_pagamento_moeda tpm on tpm.despesa_id = tp.despesa_id " +
+            "left join tipo_pagamento_moeda_log tpml on tpml.tipo_pagamento_moeda_id = tpm.despesa_id " +
+            "where d.usuario_id = ?1 " +
+            "and ((tpc.despesa_id is not null " +
+            "	and tpcp.tipo_pagamento_cartao_id is not null " +
+            "	and (tpcp.status_despesa = 0)" +
+            "	and tpcp.data_pagamento_real >=  (now() - interval '6 month'))" +
+            "	or (tpm.despesa_id is not null " +
+            "		and tpml.tipo_pagamento_moeda_id is not null " +
+            "		and (tpml.status_despesa = 0)" +
+            "		and tpml.data_pagamento_real >=  (now() - interval '6 month')))" +
+            "	group by cd.id", nativeQuery = true)
     List<String> findDespesasLast6Months(Long userId);
 
-    @Query(value = "select cast(jsonb_build_object('valor', sum(d.valor), 'categoriaId', cr.id, " +
-            "'categoriaNome', cr.nome, 'categoriaCor', cr.cor, 'mes', extract (month from d.data_despesa)) as text) " +
+    @Query(value = "select cast(jsonb_build_object('valor', (coalesce(sum(tpcp.valor_parcela), 0) + coalesce(sum(tpml.valor_pagamento), 0)), " +
+            "'categoriaId', cd.id, 'categoriaNome', cd.nome, 'categoriaCor', cd.cor, " +
+            "'mes', ?2) as text) " +
             "from despesa d " +
-            "inner join categoria_despesa cr on cr.id = d.categoria_despesa_id " +
-            "where extract (month from d.data_despesa) = ?2 " +
-            "and d.usuario_id = ?1 group by cr.id, d.data_despesa", nativeQuery = true)
+            "inner join categoria_despesa cd on cd.id = d.categoria_despesa_id " +
+            "inner join tipo_pagamento tp on tp.despesa_id = d.id " +
+            "left join tipo_pagamento_cartao tpc on tpc.despesa_id = tp.despesa_id " +
+            "left join tipo_pagamento_cartao_parcelas tpcp on tpcp.tipo_pagamento_cartao_id = tpc.despesa_id " +
+            "left join tipo_pagamento_moeda tpm on tpm.despesa_id = tp.despesa_id " +
+            "left join tipo_pagamento_moeda_log tpml on tpml.tipo_pagamento_moeda_id = tpm.despesa_id " +
+            "where d.usuario_id = ?1 " +
+            "and ((tpc.despesa_id is not null " +
+            "and tpcp.tipo_pagamento_cartao_id is not null " +
+            "	and extract (month from tpcp.data_pagamento_experada) = ?2)" +
+            "or (tpm.despesa_id is not null " +
+            "	and tpml.tipo_pagamento_moeda_id is not null " +
+            "	and extract (month from tpml.data_pagamento_experada) = ?2 ))" +
+            "group by cd.id", nativeQuery = true)
     List<String> findDespesasPorCategoriaEMes(Long userId, Long mes);
-
-//    @Query("select d from Despesa d where d.statusDespesa = 1")
-//    List<Despesa> findAllWhereStatusIsApagar();
 }

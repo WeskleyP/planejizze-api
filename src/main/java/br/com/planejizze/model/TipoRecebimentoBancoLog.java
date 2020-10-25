@@ -30,7 +30,8 @@ public class TipoRecebimentoBancoLog {
     private Long id;
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "tipo_recebimento_banco_id", foreignKey = @ForeignKey(name = "tipo_recebimento_banco_fkey"), nullable = false)
+    @JoinColumn(name = "tipo_recebimento_banco_id",
+            foreignKey = @ForeignKey(name = "tipo_recebimento_banco_fkey"), nullable = false)
     private TipoRecebimentoBanco tipoRecebimentoBanco;
     @NotNull(message = "O valor recebido não dever ser nulo!")
     @Column(name = "valor_recebido", nullable = false)

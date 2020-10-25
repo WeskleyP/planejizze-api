@@ -53,20 +53,20 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    private Role getResumedRoles(List<Role> roles) {
+    private Object getResumedRoles(List<Role> roles) {
         List<Map<String, Map<String, Boolean>>> test = roles
-                .stream().map(teste1 -> (Map<String, Map<String, Boolean>>) teste1)
+                .stream().map(teste1 -> (Map<String, Map<String, Boolean>>) teste1.getPermissions())
                 .collect(Collectors.toList());
         Optional<Map<String, Map<String, Boolean>>> last = test.stream()
                 .reduce((firstMap, secondMap) ->
                         Stream.concat(firstMap.entrySet().stream(), secondMap.entrySet().stream())
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                                (countInFirstMap, countInSecondMap) -> {
-                                    countInFirstMap.forEach((key, value) ->
-                                            countInSecondMap.merge(key, value, (v1, v2) -> v1.equals(true) || v2));
-                                    return countInSecondMap;
-                                })));
-        return (Role) last.get();
+                                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                                        (countInFirstMap, countInSecondMap) -> {
+                                            countInFirstMap.forEach((key, value) ->
+                                                    countInSecondMap.merge(key, value, (v1, v2) -> v1.equals(true) || v2));
+                                            return countInSecondMap;
+                                        })));
+        return last.orElse(null);
     }
 
     public Authentication getAuthentication(String token) {

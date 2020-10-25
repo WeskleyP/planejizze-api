@@ -26,7 +26,7 @@ public class TipoRecebimentoMoeda extends TipoRecebimento {
     private String moeda;
     @Column(name = "dia_pagamento")
     private String diaPagamento;
-    @Fetch(FetchMode.SELECT)
+    @Fetch(FetchMode.SUBSELECT)
     @OneToMany(mappedBy = "tipoRecebimentoMoeda", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<TipoRecebimentoMoedaLog> tipoRecebimentoMoedaLogs = new ArrayList<>();
 }

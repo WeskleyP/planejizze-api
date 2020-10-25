@@ -5,6 +5,8 @@ import br.com.planejizze.dto.Despesa6MonthsDTO;
 import br.com.planejizze.dto.DespesaPorCategoriaDTO;
 import br.com.planejizze.exceptions.NotFoundException;
 import br.com.planejizze.model.Despesa;
+import br.com.planejizze.model.TipoPagamentoCartao;
+import br.com.planejizze.model.TipoPagamentoMoeda;
 import br.com.planejizze.model.Usuario;
 import br.com.planejizze.repository.DespesaRepository;
 import br.com.planejizze.utils.TokenUtils;
@@ -28,19 +30,28 @@ public class DespesaService extends AbstractService<Despesa, Long, DespesaReposi
 
     @Override
     public Despesa save(Despesa entity, HttpServletRequest request) {
-        Usuario usuario = new Usuario();
-        usuario.setId(TokenUtils.from(request).getUserId());
-        entity.setUsuario(usuario);
-        entity.getTipoPagamento().setDespesa(entity);
-        return repo.save(entity);
+        return getDespesa(entity, request);
     }
 
     @Override
     public Despesa update(Despesa entity, HttpServletRequest request) {
+        return getDespesa(entity, request);
+    }
+
+    private Despesa getDespesa(Despesa entity, HttpServletRequest request) {
         Usuario usuario = new Usuario();
         usuario.setId(TokenUtils.from(request).getUserId());
         entity.setUsuario(usuario);
         entity.getTipoPagamento().setDespesa(entity);
+        if (entity.getTipoPagamento() instanceof TipoPagamentoCartao) {
+            ((TipoPagamentoCartao) entity.getTipoPagamento()).getTipoPagamentoCartaoParcelas()
+                    .forEach(tipoPagamentoCartaoParcelas ->
+                            tipoPagamentoCartaoParcelas.setTipoPagamentoCartao((TipoPagamentoCartao) entity.getTipoPagamento()));
+        } else if (entity.getTipoPagamento() instanceof TipoPagamentoMoeda) {
+            ((TipoPagamentoMoeda) entity.getTipoPagamento()).getTipoPagamentoMoedaLogs()
+                    .forEach(tipoPagamentoMoedaLog ->
+                            tipoPagamentoMoedaLog.setTipoPagamentoMoeda((TipoPagamentoMoeda) entity.getTipoPagamento()));
+        }
         return repo.save(entity);
     }
 
