@@ -1,6 +1,7 @@
 package br.com.planejizze.service;
 
 import br.com.planejizze.config.jwt.JwtTokenProvider;
+import br.com.planejizze.dto.ChangePasswordDTO;
 import br.com.planejizze.dto.ForgetPasswordDTO;
 import br.com.planejizze.dto.auth.LoginResponseDTO;
 import br.com.planejizze.dto.auth.RegisterDTO;
@@ -14,6 +15,7 @@ import br.com.planejizze.model.Usuario;
 import br.com.planejizze.repository.ComprovanteRepository;
 import br.com.planejizze.repository.RoleRepository;
 import br.com.planejizze.repository.UsuarioRepository;
+import br.com.planejizze.utils.TokenUtils;
 import br.com.planejizze.utils.UUIDUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -26,9 +28,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -191,6 +193,21 @@ public class AuthService {
         comprovanteRepository.save(comprovante);
     }
 
+    public void changePassword(HttpServletRequest request, ChangePasswordDTO changePasswordDTO) {
+        Optional<Usuario> user = usuarioRepository.findById(TokenUtils.from(request).getUserId());
+        if (user.isEmpty()) {
+            throw new NotFoundException("Usuário não encontrado");
+        }
+        if (!user.get().getSenha().equals(passwordEncoder.encode(changePasswordDTO.getOldPassword()))) {
+            throw new DifferentPasswordException("A senha atual está errada!");
+        }
+        if (!changePasswordDTO.getNewPassword().equals(changePasswordDTO.getNewPasswordConfirmation())) {
+            throw new DifferentPasswordException("As senhas informadas estão divergentes!");
+        }
+        user.get().setSenha(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
+        usuarioRepository.save(user.get());
+    }
+
     public Jws<Claims> readToken(String token) {
         return Jwts.parser().setSigningKey(this.secretKey.getBytes()).parseClaimsJws(token);
     }
@@ -225,7 +242,7 @@ public class AuthService {
             throw new InvalidJwtAuthenticationException("Usuário não informado");
         }
         try {
-            claims.getBody().get("permissions", List.class);
+            claims.getBody().get("permissions", Object.class);
         } catch (Exception ignore) {
             throw new InvalidJwtAuthenticationException("Lista de permissões não informada");
         }

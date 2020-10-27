@@ -26,7 +26,7 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long> {
             "left join tipo_pagamento_cartao_parcelas tpcp on tpcp.tipo_pagamento_cartao_id = tpc.despesa_id " +
             "left join tipo_pagamento_moeda tpm on tpm.despesa_id = tp.despesa_id " +
             "left join tipo_pagamento_moeda_log tpml on tpml.tipo_pagamento_moeda_id = tpm.despesa_id " +
-            "where d.usuario_id = ?1 " +
+            "where d.usuario_id = ?1 and d.ativo" +
             "   and ((tpc.despesa_id is not null " +
             "   and tpcp.tipo_pagamento_cartao_id is not null " +
             "   and (tpcp.status_despesa = 0)" +
@@ -45,7 +45,7 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long> {
             "left join tipo_pagamento_cartao_parcelas tpcp on tpcp.tipo_pagamento_cartao_id = tpc.despesa_id " +
             "left join tipo_pagamento_moeda tpm on tpm.despesa_id = tp.despesa_id " +
             "left join tipo_pagamento_moeda_log tpml on tpml.tipo_pagamento_moeda_id = tpm.despesa_id " +
-            "where d.usuario_id = ?1 " +
+            "where d.usuario_id = ?1 and d.ativo" +
             "   and ((tpc.despesa_id is not null " +
             "   and tpcp.tipo_pagamento_cartao_id is not null " +
             "   and (tpcp.status_despesa in (1,2))" +
@@ -63,7 +63,7 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long> {
             "left join tipo_pagamento_cartao_parcelas tpcp on tpcp.tipo_pagamento_cartao_id = tpc.despesa_id " +
             "left join tipo_pagamento_moeda tpm on tpm.despesa_id = tp.despesa_id " +
             "left join tipo_pagamento_moeda_log tpml on tpml.tipo_pagamento_moeda_id = tpm.despesa_id " +
-            "where d.usuario_id = ?1 " +
+            "where d.usuario_id = ?1 and d.ativo" +
             "and ((tpc.despesa_id is not null " +
             "and tpcp.tipo_pagamento_cartao_id is not null " +
             "and (tpcp.status_despesa in (1,2))" +
@@ -84,7 +84,7 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long> {
             "left join tipo_pagamento_cartao_parcelas tpcp on tpcp.tipo_pagamento_cartao_id = tpc.despesa_id " +
             "left join tipo_pagamento_moeda tpm on tpm.despesa_id = tp.despesa_id " +
             "left join tipo_pagamento_moeda_log tpml on tpml.tipo_pagamento_moeda_id = tpm.despesa_id " +
-            "where d.usuario_id = ?1 " +
+            "where d.usuario_id = ?1 and d.ativo " +
             "and ((tpc.despesa_id is not null " +
             "	and tpcp.tipo_pagamento_cartao_id is not null " +
             "	and (tpcp.status_despesa = 0)" +
@@ -106,7 +106,7 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long> {
             "left join tipo_pagamento_cartao_parcelas tpcp on tpcp.tipo_pagamento_cartao_id = tpc.despesa_id " +
             "left join tipo_pagamento_moeda tpm on tpm.despesa_id = tp.despesa_id " +
             "left join tipo_pagamento_moeda_log tpml on tpml.tipo_pagamento_moeda_id = tpm.despesa_id " +
-            "where d.usuario_id = ?1 " +
+            "where d.usuario_id = ?1 and d.ativo " +
             "and ((tpc.despesa_id is not null " +
             "and tpcp.tipo_pagamento_cartao_id is not null " +
             "	and extract (month from tpcp.data_pagamento_experada) = ?2)" +

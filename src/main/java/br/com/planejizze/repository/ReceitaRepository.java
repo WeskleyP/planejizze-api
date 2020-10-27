@@ -26,7 +26,7 @@ public interface ReceitaRepository extends JpaRepository<Receita, Long> {
             "left join tipo_recebimento_banco_log trbl on trbl.tipo_recebimento_banco_id = trb.receita_id " +
             "left join tipo_recebimento_moeda trm on trm.receita_id = tr.receita_id " +
             "left join tipo_recebimento_moeda_log trml on trml.tipo_recebimento_moeda_id = trm.receita_id " +
-            "where r.usuario_id = ?1 " +
+            "where r.usuario_id = ?1 and r.ativo" +
             "   and ((trb.receita_id is not null " +
             "   and trbl.tipo_recebimento_banco_id is not null " +
             "   and (trbl.status_receita = 0)" +
@@ -45,7 +45,7 @@ public interface ReceitaRepository extends JpaRepository<Receita, Long> {
             "left join tipo_recebimento_banco_log trbl on trbl.tipo_recebimento_banco_id = trb.receita_id " +
             "left join tipo_recebimento_moeda trm on trm.receita_id = tr.receita_id " +
             "left join tipo_recebimento_moeda_log trml on trml.tipo_recebimento_moeda_id = trm.receita_id " +
-            "where r.usuario_id = ?1 " +
+            "where r.usuario_id = ?1 and r.ativo" +
             "   and ((trb.receita_id is not null " +
             "   and trbl.tipo_recebimento_banco_id is not null " +
             "   and (trbl.status_receita in (1,2))" +
@@ -63,7 +63,7 @@ public interface ReceitaRepository extends JpaRepository<Receita, Long> {
             "left join tipo_recebimento_banco_log trbl on trbl.tipo_recebimento_banco_id = trb.receita_id " +
             "left join tipo_recebimento_moeda trm on trm.receita_id = tr.receita_id " +
             "left join tipo_recebimento_moeda_log trml on trml.tipo_recebimento_moeda_id = trm.receita_id " +
-            "where r.usuario_id = ?1 " +
+            "where r.usuario_id = ?1 and r.ativo " +
             "and ((trb.receita_id is not null " +
             "and trbl.tipo_recebimento_banco_id is not null " +
             "and (trbl.status_receita in (1,2))" +
@@ -84,7 +84,7 @@ public interface ReceitaRepository extends JpaRepository<Receita, Long> {
             "left join tipo_recebimento_banco_log trbl on trbl.tipo_recebimento_banco_id = trb.receita_id " +
             "left join tipo_recebimento_moeda trm on trm.receita_id = tr.receita_id " +
             "left join tipo_recebimento_moeda_log trml on trml.tipo_recebimento_moeda_id = trm.receita_id " +
-            "where r.usuario_id = ?1 " +
+            "where r.usuario_id = ?1 and r.ativo " +
             "and ((trb.receita_id is not null " +
             "	and trbl.tipo_recebimento_banco_id is not null " +
             "	and (trbl.status_receita = 0)" +
@@ -106,7 +106,7 @@ public interface ReceitaRepository extends JpaRepository<Receita, Long> {
             "left join tipo_recebimento_banco_log trbl on trbl.tipo_recebimento_banco_id = trb.receita_id " +
             "left join tipo_recebimento_moeda trm on trm.receita_id = tr.receita_id " +
             "left join tipo_recebimento_moeda_log trml on trml.tipo_recebimento_moeda_id = trm.receita_id " +
-            "where r.usuario_id = ?1 " +
+            "where r.usuario_id = ?1 and r.ativo " +
             "and ((trb.receita_id is not null " +
             "and trbl.tipo_recebimento_banco_id is not null " +
             "	and extract (month from trbl.data_recebimento_experada) = ?2)" +

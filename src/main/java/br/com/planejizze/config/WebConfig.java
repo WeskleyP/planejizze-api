@@ -41,7 +41,8 @@ public class WebConfig implements WebMvcConfigurer {
                         new Tag("Planejamento", "Controlar planejamentos do usuário"),
                         new Tag("Relatórios", "Gerar relatórios para o usuário"),
                         new Tag("Usuário", "Controlar dados do usuário"),
-                        new Tag("File", "Faz upload de imagens e buscar por imagens"));
+                        new Tag("File", "Faz upload de imagens e buscar por imagens"),
+                        new Tag("Preferências", "Altera dados de usuário e outras preferências"));
     }
 
     private ApiInfo apiInfo() {
