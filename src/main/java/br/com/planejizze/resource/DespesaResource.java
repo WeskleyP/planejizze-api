@@ -4,6 +4,7 @@ import br.com.planejizze.dto.Despesa30DayDTO;
 import br.com.planejizze.dto.Despesa6MonthsDTO;
 import br.com.planejizze.dto.DespesaPorCategoriaDTO;
 import br.com.planejizze.exceptions.BadParamsException;
+import br.com.planejizze.exceptions.NotFoundException;
 import br.com.planejizze.model.Despesa;
 import br.com.planejizze.repository.DespesaRepository;
 import br.com.planejizze.service.DespesaService;
@@ -14,10 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -69,5 +67,32 @@ public class DespesaResource extends AbstractResource<Despesa, Long, DespesaRepo
                                                                          @RequestParam("mes") Long mes) throws JsonProcessingException {
         if (!(mes >= 1 & mes <= 12)) throw new BadParamsException("O mês deve estar entre 1 e 12");
         return ResponseEntity.ok(despesaService.porCategoriaEMês(TokenUtils.from(request).getUserId(), mes));
+    }
+
+    @ApiOperation("Altera o status de despesas com tipo de pagamento = cartão")
+    @PreAuthorize(value = "hasPermission(#this.this.class.simpleName, 'update')")
+    @PutMapping(path = "/updateDespesaCartao/{id}")
+    public ResponseEntity updateDespesaStatusCartao(@PathVariable Long id) {
+        if (despesaService.updateDespesaStatusCartao(id) > 0) {
+            return ResponseEntity.ok().build();
+        }
+        throw new NotFoundException("Não foi possivel alterar o status da despesa!");
+    }
+
+    @ApiOperation("Altera o status de despesas com tipo de pagamento = moeda")
+    @PreAuthorize(value = "hasPermission(#this.this.class.simpleName, 'update')")
+    @PutMapping(path = "/updateDespesaMoeda/{id}")
+    public ResponseEntity updateDespesaStatusMoeda(@PathVariable Long id) {
+        if (despesaService.updateDespesaStatusMoeda(id) > 0) {
+            return ResponseEntity.ok().build();
+        }
+        throw new NotFoundException("Não foi possivel alterar o status da despesa!");
+    }
+
+    @ApiOperation("Busca as despesas para exibir no gráfico do dashboard")
+    @PreAuthorize(value = "hasPermission(#this.this.class.simpleName, 'read')")
+    @GetMapping(path = "/dashboard")
+    public ResponseEntity<List<Despesa>> dashboard(HttpServletRequest request, @RequestParam("days") Long days) {
+        return ResponseEntity.ok(despesaService.findDespesasForDashboard(TokenUtils.from(request).getUserId(), days));
     }
 }

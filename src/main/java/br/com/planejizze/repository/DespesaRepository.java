@@ -4,9 +4,12 @@ import br.com.planejizze.model.Despesa;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -121,4 +124,25 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long> {
             "left join TipoPagamentoMoedaLog tpml on tpml.tipoPagamentoMoeda.id = d.tipoPagamento.id " +
             "where (tpcp.statusDespesa = 1 or tpml.statusDespesa = 1)")
     List<Despesa> findAllWhereStatusIsApagar();
+
+    @Query("update TipoPagamentoMoedaLog " +
+            "set statusDespesa = 0 " +
+            "where id = ?1 ")
+    @Transactional
+    @Modifying
+    Integer updateDespesaStatusMoeda(Long id);
+
+    @Query("update TipoPagamentoCartaoParcelas " +
+            "set statusDespesa = 0 " +
+            "where id = ?1 ")
+    @Transactional
+    @Modifying
+    Integer updateDespesaStatusCartao(Long id);
+
+    @Query("select d from Despesa d " +
+            "left join TipoPagamentoCartaoParcelas tpcp on tpcp.tipoPagamentoCartao.id = d.tipoPagamento.id " +
+            "left join TipoPagamentoMoedaLog tpml on tpml.tipoPagamentoMoeda.id = d.tipoPagamento.id " +
+            "where (tpml.dataPagamentoReal >= ?2 or tpcp.dataPagamentoReal >= ?2)" +
+            "and d.usuario.id = ?1")
+    List<Despesa> findDespesasForDashboard(Long userId, Date date);
 }

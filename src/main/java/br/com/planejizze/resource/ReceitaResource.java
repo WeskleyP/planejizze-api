@@ -4,6 +4,7 @@ import br.com.planejizze.dto.Receita30DayDTO;
 import br.com.planejizze.dto.Receita6MonthsDTO;
 import br.com.planejizze.dto.ReceitaPorCategoriaDTO;
 import br.com.planejizze.exceptions.BadParamsException;
+import br.com.planejizze.exceptions.NotFoundException;
 import br.com.planejizze.model.Receita;
 import br.com.planejizze.repository.ReceitaRepository;
 import br.com.planejizze.service.ReceitaService;
@@ -14,10 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -65,9 +63,36 @@ public class ReceitaResource extends AbstractResource<Receita, Long, ReceitaRepo
     @ApiOperation("Busca as receitas agrupadas por categoria e por determinado mes")
     @PreAuthorize(value = "hasPermission(#this.this.class.simpleName, 'read')")
     @GetMapping(path = "/byCategoria")
-    public ResponseEntity<List<ReceitaPorCategoriaDTO>> porCategoriaEMês(HttpServletRequest request,
+    public ResponseEntity<List<ReceitaPorCategoriaDTO>> porCategoriaEMes(HttpServletRequest request,
                                                                          @RequestParam("mes") Long mes) throws JsonProcessingException {
         if (!(mes >= 1 & mes <= 12)) throw new BadParamsException("O mês deve estar entre 1 e 12");
-        return ResponseEntity.ok(receitaService.porCategoriaEMês(TokenUtils.from(request).getUserId(), mes));
+        return ResponseEntity.ok(receitaService.porCategoriaEMes(TokenUtils.from(request).getUserId(), mes));
+    }
+
+    @ApiOperation("Altera o status de receitas com tipo de recebimento = banco")
+    @PreAuthorize(value = "hasPermission(#this.this.class.simpleName, 'update')")
+    @PutMapping(path = "/updateReceitaBanco/{id}")
+    public ResponseEntity updateReceitaStatusBanco(@PathVariable Long id) {
+        if (receitaService.updateReceitaStatusBanco(id) > 0) {
+            return ResponseEntity.ok().build();
+        }
+        throw new NotFoundException("Não foi possivel alterar o status da receita!");
+    }
+
+    @ApiOperation("Altera o status de receitas com tipo de recebimento = moeda")
+    @PreAuthorize(value = "hasPermission(#this.this.class.simpleName, 'update')")
+    @PutMapping(path = "/updateReceitaMoeda/{id}")
+    public ResponseEntity updateReceitaStatusMoeda(@PathVariable Long id) {
+        if (receitaService.updateReceitaStatusMoeda(id) > 0) {
+            return ResponseEntity.ok().build();
+        }
+        throw new NotFoundException("Não foi possivel alterar o status da receita!");
+    }
+
+    @ApiOperation("Busca as receitas para exibir no gráfico do dashboard")
+    @PreAuthorize(value = "hasPermission(#this.this.class.simpleName, 'read')")
+    @GetMapping(path = "/dashboard")
+    public ResponseEntity<List<Receita>> dashboard(HttpServletRequest request, @RequestParam("days") Long days) {
+        return ResponseEntity.ok(receitaService.findReceitasForDashboard(TokenUtils.from(request).getUserId(), days));
     }
 }
