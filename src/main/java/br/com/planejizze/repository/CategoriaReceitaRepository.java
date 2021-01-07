@@ -4,6 +4,7 @@ import br.com.planejizze.model.CategoriaReceita;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,5 +17,6 @@ public interface CategoriaReceitaRepository extends JpaRepository<CategoriaRecei
 
     Page<CategoriaReceita> findAllByUsuarioIdOrUsuarioIdIsNull(Long id, Pageable pageable);
 
-    Optional<CategoriaReceita> findByIdAndUsuarioIdOrUsuarioIsNull(Long id, Long userId);
+    @Query("select c from CategoriaReceita c where c.id = ?1 and (c.usuario.id = ?2 or c.usuario.id is null)")
+    Optional<CategoriaReceita> findByIdAndUsuarioIdOrUsuarioIdIsNull(Long id, Long userId);
 }

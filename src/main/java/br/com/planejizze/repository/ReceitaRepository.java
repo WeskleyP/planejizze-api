@@ -139,7 +139,7 @@ public interface ReceitaRepository extends JpaRepository<Receita, Long> {
     @Modifying
     Integer updateReceitaStatusMoeda(Long id);
 
-    @Query(value = "select r from Receita r " +
+    @Query(value = "select distinct r from Receita r " +
             "left join TipoRecebimentoBancoLog trbl on trbl.tipoRecebimentoBanco.id = r.tipoRecebimento.id " +
             "left join TipoRecebimentoMoedaLog trml on trml.tipoRecebimentoMoeda.id = r.tipoRecebimento.id " +
             "where (trml.dataRecebimentoReal >= ?2 or trbl.dataRecebimentoReal >= ?2)" +

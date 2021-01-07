@@ -110,14 +110,11 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long> {
             "left join tipo_pagamento_moeda tpm on tpm.despesa_id = tp.despesa_id " +
             "left join tipo_pagamento_moeda_log tpml on tpml.tipo_pagamento_moeda_id = tpm.despesa_id " +
             "where d.usuario_id = ?1 and d.ativo " +
-            "and ((tpc.despesa_id is not null " +
+            "and (tpc.despesa_id is not null and tpc.cartao_id = ?3 " +
             "and tpcp.tipo_pagamento_cartao_id is not null " +
             "	and extract (month from tpcp.data_pagamento_experada) = ?2)" +
-            "or (tpm.despesa_id is not null " +
-            "	and tpml.tipo_pagamento_moeda_id is not null " +
-            "	and extract (month from tpml.data_pagamento_experada) = ?2 ))" +
             "group by cd.id", nativeQuery = true)
-    List<String> findDespesasPorCategoriaEMes(Long userId, Long mes);
+    List<String> findDespesasPorCategoriaEMesECartao(Long userId, Long mes, Long cartao);
 
     @Query("select distinct d from Despesa d " +
             "left join TipoPagamentoCartaoParcelas tpcp on tpcp.tipoPagamentoCartao.id = d.tipoPagamento.id " +
@@ -139,10 +136,30 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long> {
     @Modifying
     Integer updateDespesaStatusCartao(Long id);
 
-    @Query("select d from Despesa d " +
+    @Query("select distinct d from Despesa d " +
             "left join TipoPagamentoCartaoParcelas tpcp on tpcp.tipoPagamentoCartao.id = d.tipoPagamento.id " +
             "left join TipoPagamentoMoedaLog tpml on tpml.tipoPagamentoMoeda.id = d.tipoPagamento.id " +
             "where (tpml.dataPagamentoReal >= ?2 or tpcp.dataPagamentoReal >= ?2)" +
             "and d.usuario.id = ?1")
     List<Despesa> findDespesasForDashboard(Long userId, Date date);
+
+    @Query(value = "select cast(jsonb_build_object('valor', (coalesce(sum(tpcp.valor_parcela), 0) + coalesce(sum(tpml.valor_pagamento), 0)), " +
+            "'categoriaId', cd.id, 'categoriaNome', cd.nome, 'categoriaCor', cd.cor, " +
+            "'mes', ?2) as text) " +
+            "from despesa d " +
+            "inner join categoria_despesa cd on cd.id = d.categoria_despesa_id " +
+            "inner join tipo_pagamento tp on tp.despesa_id = d.id " +
+            "left join tipo_pagamento_cartao tpc on tpc.despesa_id = tp.despesa_id " +
+            "left join tipo_pagamento_cartao_parcelas tpcp on tpcp.tipo_pagamento_cartao_id = tpc.despesa_id " +
+            "left join tipo_pagamento_moeda tpm on tpm.despesa_id = tp.despesa_id " +
+            "left join tipo_pagamento_moeda_log tpml on tpml.tipo_pagamento_moeda_id = tpm.despesa_id " +
+            "where d.usuario_id = ?1 and d.ativo " +
+            "and ((tpc.despesa_id is not null " +
+            "and tpcp.tipo_pagamento_cartao_id is not null " +
+            "	and extract (month from tpcp.data_pagamento_experada) = ?2)" +
+            "or (tpm.despesa_id is not null " +
+            "	and tpml.tipo_pagamento_moeda_id is not null " +
+            "	and extract (month from tpml.data_pagamento_experada) = ?2 ))" +
+            "group by cd.id", nativeQuery = true)
+    List<String> findDespesasPorCategoriaEMes(Long userId, Long mes);
 }

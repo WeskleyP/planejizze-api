@@ -87,19 +87,19 @@ public class DespesaService extends AbstractService<Despesa, Long, DespesaReposi
     }
 
     public List<Despesa6MonthsDTO> findDespesasLast6Months(Long userId) throws JsonProcessingException {
-        List<Despesa6MonthsDTO> receita6MonthsDTO = new ArrayList<>();
+        List<Despesa6MonthsDTO> despesa6MonthsDTO = new ArrayList<>();
         for (String list : repo.findDespesasLast6Months(userId)) {
-            receita6MonthsDTO.add(new ObjectMapper().readValue(list, Despesa6MonthsDTO.class));
+            despesa6MonthsDTO.add(new ObjectMapper().readValue(list, Despesa6MonthsDTO.class));
         }
-        return receita6MonthsDTO;
+        return despesa6MonthsDTO;
     }
 
-    public List<DespesaPorCategoriaDTO> porCategoriaEMês(Long userId, Long mes) throws JsonProcessingException {
-        List<DespesaPorCategoriaDTO> receita6MonthsDTO = new ArrayList<>();
-        for (String list : repo.findDespesasPorCategoriaEMes(userId, mes)) {
-            receita6MonthsDTO.add(new ObjectMapper().readValue(list, DespesaPorCategoriaDTO.class));
+    public List<DespesaPorCategoriaDTO> porCategoriaEMêsECartao(Long userId, Long mes, Long cartao) throws JsonProcessingException {
+        List<DespesaPorCategoriaDTO> despesaCartaoMes = new ArrayList<>();
+        for (String list : repo.findDespesasPorCategoriaEMesECartao(userId, mes, cartao)) {
+            despesaCartaoMes.add(new ObjectMapper().readValue(list, DespesaPorCategoriaDTO.class));
         }
-        return receita6MonthsDTO;
+        return despesaCartaoMes;
     }
 
     public Integer updateDespesaStatusCartao(Long id) {
@@ -116,5 +116,13 @@ public class DespesaService extends AbstractService<Despesa, Long, DespesaReposi
         }
         Date date = DateUtils.addDays(new Date(), Math.toIntExact(Math.subtractExact(days, (days * 2))));
         return repo.findDespesasForDashboard(userId, date);
+    }
+
+    public List<DespesaPorCategoriaDTO> porCategoriaEMês(Long userId, Long mes) throws JsonProcessingException {
+        List<DespesaPorCategoriaDTO> despesaCartaoMes = new ArrayList<>();
+        for (String list : repo.findDespesasPorCategoriaEMes(userId, mes)) {
+            despesaCartaoMes.add(new ObjectMapper().readValue(list, DespesaPorCategoriaDTO.class));
+        }
+        return despesaCartaoMes;
     }
 }

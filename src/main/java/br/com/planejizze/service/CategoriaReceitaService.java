@@ -48,7 +48,7 @@ public class CategoriaReceitaService extends AbstractService<CategoriaReceita, L
 
     @Override
     public CategoriaReceita findById(Long aLong, HttpServletRequest request) throws NotFoundException {
-        return repo.findByIdAndUsuarioIdOrUsuarioIsNull(aLong, TokenUtils.from(request).getUserId())
+        return repo.findByIdAndUsuarioIdOrUsuarioIdIsNull(aLong, TokenUtils.from(request).getUserId())
                 .orElseThrow(() -> new NotFoundException("Dados não encontrados! Id: " + aLong));
     }
 }

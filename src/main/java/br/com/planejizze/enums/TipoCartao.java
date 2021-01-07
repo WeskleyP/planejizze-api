@@ -2,8 +2,9 @@ package br.com.planejizze.enums;
 
 public enum TipoCartao {
 
-    CREDTIO(0, "CREDTIO"),
-    DEBITO(1, "DEBITO");
+    CREDITO(0, "CREDITO"),
+    DEBITO(1, "DEBITO"),
+    CREDITO_E_DEBITO(2, "CREDITO E DEBITO");
 
     private final int cod;
     private final String descricao;

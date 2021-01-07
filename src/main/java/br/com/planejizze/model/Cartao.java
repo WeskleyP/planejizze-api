@@ -1,5 +1,7 @@
 package br.com.planejizze.model;
 
+import br.com.planejizze.enums.TipoCartao;
+import br.com.planejizze.enums.TipoConta;
 import br.com.planejizze.utils.Constants;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -47,11 +49,13 @@ public class Cartao {
     private Double limite;
     @Column(name = "empresa_cartao")
     private String empresaCartao;
-    @DateTimeFormat(pattern = "dd/MM")
-    @JsonFormat(pattern = "dd/MM")
-    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "dd")
+    @JsonFormat(pattern = "dd")
     @Column(name = "data_vencimento")
-    private Date dataVencimento;
+    private String dataVencimento;
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "tipo_cartao")
+    private TipoCartao tipoCartao;
     @JsonIgnore
     @Column(name = "ativo", nullable = false, columnDefinition = "boolean default true")
     private Boolean ativo = true;

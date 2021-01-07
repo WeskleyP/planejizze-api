@@ -26,7 +26,6 @@ public class PreferencesResource {
     private final PreferencesService preferencesService;
     private final AuthService authService;
 
-    // TODO endpoint dashboard
     @Autowired
     public PreferencesResource(PreferencesService preferencesService, AuthService authService) {
         this.preferencesService = preferencesService;

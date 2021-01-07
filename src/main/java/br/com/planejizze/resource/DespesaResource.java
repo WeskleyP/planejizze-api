@@ -69,6 +69,15 @@ public class DespesaResource extends AbstractResource<Despesa, Long, DespesaRepo
         return ResponseEntity.ok(despesaService.porCategoriaEMês(TokenUtils.from(request).getUserId(), mes));
     }
 
+    @ApiOperation("Busca as despesas agrupadas por categoria e por determinado mes")
+    @PreAuthorize(value = "hasPermission(#this.this.class.simpleName, 'read')")
+    @GetMapping(path = "/byCategoriaECartao")
+    public ResponseEntity<List<DespesaPorCategoriaDTO>> porCategoriaEMêsECartao(HttpServletRequest request,
+                                                                                @RequestParam("mes") Long mes, @RequestParam("cartao") Long cartao) throws JsonProcessingException {
+        if (!(mes >= 1 & mes <= 12)) throw new BadParamsException("O mês deve estar entre 1 e 12");
+        return ResponseEntity.ok(despesaService.porCategoriaEMêsECartao(TokenUtils.from(request).getUserId(), mes, cartao));
+    }
+
     @ApiOperation("Altera o status de despesas com tipo de pagamento = cartão")
     @PreAuthorize(value = "hasPermission(#this.this.class.simpleName, 'update')")
     @PutMapping(path = "/updateDespesaCartao/{id}")

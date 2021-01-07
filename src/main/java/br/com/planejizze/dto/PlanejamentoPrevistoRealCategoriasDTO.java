@@ -11,6 +11,7 @@ public class PlanejamentoPrevistoRealCategoriasDTO {
 
     private Long categoriaId;
     private String categoriaNome;
+    private String categoriaCor;
     private Double valorMaximoGasto;
     private Double valorGastoAtual;
 }

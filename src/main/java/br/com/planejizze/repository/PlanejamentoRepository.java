@@ -33,7 +33,7 @@ public interface PlanejamentoRepository extends JpaRepository<Planejamento, Long
     @Query(value = "select cast(jsonb_build_object('id', p.id, 'descricao', p.descricao," +
             "'metaGastos',p.meta_gastos,'alertaPorcentagem', p.alerta_porcentagem, 'dataInicio', p.data_inicio," +
             "'dataFim', p.data_fim,'planejamentoPrevistoRealCategorias', jsonb_agg(jsonb_build_object('categoriaId'," +
-            "cd.id ,'categoriaNome',cd.nome, 'valorMaximoGasto', pc.valor_max_gasto," +
+            "cd.id ,'categoriaNome',cd.nome,'categoriaCor', cd.cor, 'valorMaximoGasto', pc.valor_max_gasto," +
             "'valorGastoAtual', des.total ))) as text) " +
             "from planejamento p " +
             "left join  planejamento_categoria pc on pc.planejamento_id = p.id " +
@@ -56,7 +56,7 @@ public interface PlanejamentoRepository extends JpaRepository<Planejamento, Long
     @Query(value = "select cast(jsonb_build_object('id', p.id, 'descricao', p.descricao," +
             "'metaGastos',p.meta_gastos,'alertaPorcentagem', p.alerta_porcentagem, 'dataInicio', p.data_inicio," +
             "'dataFim', p.data_fim,'planejamentoPrevistoRealCategorias', jsonb_agg(jsonb_build_object('categoriaId'," +
-            "cd.id ,'categoriaNome',cd.nome, 'valorMaximoGasto', pc.valor_max_gasto," +
+            "cd.id ,'categoriaNome',cd.nome,'categoriaCor', cd.cor, 'valorMaximoGasto', pc.valor_max_gasto," +
             "'valorGastoAtual', des.total ))) as text) " +
             "from planejamento p " +
             "left join  planejamento_categoria pc on pc.planejamento_id = p.id " +

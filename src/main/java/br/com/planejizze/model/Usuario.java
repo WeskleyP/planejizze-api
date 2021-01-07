@@ -33,7 +33,7 @@ import static java.util.stream.Collectors.toList;
 @SQLDelete(sql = "UPDATE usuario SET ativo = false WHERE id = ?")
 @Where(clause = Constants.ATIVO)
 @SequenceGenerator(name = "usuario_sequence", sequenceName = "usuario_sequence_pkey", allocationSize = 1)
-@JsonIgnoreProperties({"createdOn", "updatedOn"})
+@JsonIgnoreProperties({"updatedOn"})
 public class Usuario implements UserDetails {
 
     private static final long serialVersionUID = 8815680579773416488L;
