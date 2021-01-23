@@ -242,6 +242,14 @@ public class AuthService {
             throw new InvalidJwtAuthenticationException("Usuário não informado");
         }
         try {
+            claims.getBody().get("type", String.class);
+            if (!claims.getBody().get("type", String.class).equals("refresh")) {
+                throw new InvalidJwtAuthenticationException("O token informado não é do tipo refreshToken");
+            }
+        } catch (Exception ignore) {
+            throw new InvalidJwtAuthenticationException("O token informado não é do tipo refreshToken");
+        }
+        try {
             claims.getBody().get("permissions", Object.class);
         } catch (Exception ignore) {
             throw new InvalidJwtAuthenticationException("Lista de permissões não informada");

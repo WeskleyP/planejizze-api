@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 
 @Service
 public class ScheduleService {
@@ -43,7 +44,7 @@ public class ScheduleService {
         if (logsBanco.size() > 0) {
             for (var b : logsBanco) {
                 if (b.getStatusReceita().equals(StatusReceita.A_RECEBER)) {
-                    if (b.getDataRecebimentoExperada().toInstant().isAfter(Instant.now().plus(12, ChronoUnit.HOURS))) {
+                    if (b.getDataRecebimentoExperada().after(Date.from(Instant.now().plus(12, ChronoUnit.HOURS)))) {
                         b.setStatusReceita(StatusReceita.ATRASADA);
                     }
                 }
@@ -52,7 +53,7 @@ public class ScheduleService {
         if (logsMoeda.size() > 0) {
             for (var m : logsMoeda) {
                 if (m.getStatusReceita().equals(StatusReceita.A_RECEBER)) {
-                    if (m.getDataRecebimentoExperada().toInstant().isAfter(Instant.now().plus(12, ChronoUnit.HOURS))) {
+                    if (m.getDataRecebimentoExperada().after(Date.from(Instant.now().plus(12, ChronoUnit.HOURS)))) {
                         m.setStatusReceita(StatusReceita.ATRASADA);
                     }
                 }
@@ -87,7 +88,7 @@ public class ScheduleService {
         if (logsCartao.size() > 0) {
             for (var c : logsCartao) {
                 if (c.getStatusDespesa().equals(StatusDespesa.A_PAGAR)) {
-                    if (c.getDataPagamentoExperada().toInstant().isAfter(Instant.now().plus(12, ChronoUnit.HOURS))) {
+                    if (c.getDataPagamentoExperada().after(Date.from(Instant.now().plus(12, ChronoUnit.HOURS)))) {
                         c.setStatusDespesa(StatusDespesa.ATRASADA);
                     }
                 }
@@ -96,7 +97,7 @@ public class ScheduleService {
         if (logsMoeda.size() > 0) {
             for (var m : logsMoeda) {
                 if (m.getStatusDespesa().equals(StatusDespesa.A_PAGAR)) {
-                    if (m.getDataPagamentoExperada().toInstant().isAfter(Instant.now().plus(12, ChronoUnit.HOURS))) {
+                    if (m.getDataPagamentoExperada().after(Date.from(Instant.now().plus(12, ChronoUnit.HOURS)))) {
                         m.setStatusDespesa(StatusDespesa.ATRASADA);
                     }
                 }

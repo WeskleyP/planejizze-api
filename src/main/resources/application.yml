@@ -4,6 +4,7 @@ spring:
   jackson:
     serialization:
       fail-on-empty-beans: false
+#      write-dates-as-timestamps: true
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&useSSL=false&useTimezone=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
     username: postgres

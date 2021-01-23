@@ -36,13 +36,14 @@ public class JwtTokenProvider {
     }
 
     public String createToken(String username, List<Role> roles, Long userId) {
-        return getTokens(username, roles, userId, validityInMillisecondsToken);
+        return getTokens(username, roles, userId, validityInMillisecondsToken, "common");
     }
 
-    private String getTokens(String username, List<Role> roles, Long userId, Long validityInMillisecondsToken) {
+    private String getTokens(String username, List<Role> roles, Long userId, Long validityInMillisecondsToken, String type) {
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("user", userId);
         claims.put("permissions", getResumedRoles(roles));
+        claims.put("type", type);
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMillisecondsToken);
         return Jwts.builder()
@@ -96,6 +97,6 @@ public class JwtTokenProvider {
     }
 
     public String createRefreshToken(String email, List<Role> roles, Long id) {
-        return getTokens(email, roles, id, validityInMillisecondsRefreshToken);
+        return getTokens(email, roles, id, validityInMillisecondsRefreshToken, "refresh");
     }
 }

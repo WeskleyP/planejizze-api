@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
+import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
+@Order(1)
 public class ResourceExceptionHandler {
 
     @ExceptionHandler({NotFoundException.class, EmailNotFoundException.class})
