@@ -126,14 +126,16 @@ public interface ReceitaRepository extends JpaRepository<Receita, Long> {
     List<Receita> findAllWhereStatusIsAreceber();
 
     @Query("update TipoRecebimentoBancoLog " +
-            "set statusReceita = 0 " +
+            "set statusReceita = 0," +
+            "   dataRecebimentoReal = current_date " +
             "where id = ?1 ")
     @Transactional
     @Modifying
     Integer updateReceitaStatusBanco(Long id);
 
     @Query("update TipoRecebimentoMoedaLog " +
-            "set statusReceita = 0 " +
+            "set statusReceita = 0," +
+            "   dataRecebimentoReal = current_date " +
             "where id = ?1 ")
     @Transactional
     @Modifying

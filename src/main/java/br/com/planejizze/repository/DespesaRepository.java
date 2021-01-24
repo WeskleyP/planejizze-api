@@ -123,14 +123,16 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long> {
     List<Despesa> findAllWhereStatusIsApagar();
 
     @Query("update TipoPagamentoMoedaLog " +
-            "set statusDespesa = 0 " +
+            "set statusDespesa = 0," +
+            "   dataPagamentoReal = current_date " +
             "where id = ?1 ")
     @Transactional
     @Modifying
     Integer updateDespesaStatusMoeda(Long id);
 
     @Query("update TipoPagamentoCartaoParcelas " +
-            "set statusDespesa = 0 " +
+            "set statusDespesa = 0," +
+            "   dataPagamentoReal = current_date " +
             "where id = ?1 ")
     @Transactional
     @Modifying
