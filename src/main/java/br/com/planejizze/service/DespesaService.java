@@ -46,6 +46,7 @@ public class DespesaService extends AbstractService<Despesa, Long, DespesaReposi
         usuario.setId(TokenUtils.from(request).getUserId());
         entity.setUsuario(usuario);
         entity.getTipoPagamento().setDespesa(entity);
+        entity.getTipoPagamento().setId(entity.getId());
         if (entity.getTipoPagamento() instanceof TipoPagamentoCartao) {
             ((TipoPagamentoCartao) entity.getTipoPagamento()).getTipoPagamentoCartaoParcelas()
                     .forEach(tipoPagamentoCartaoParcelas ->

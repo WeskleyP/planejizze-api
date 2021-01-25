@@ -44,7 +44,7 @@ public class ScheduleService {
         if (logsBanco.size() > 0) {
             for (var b : logsBanco) {
                 if (b.getStatusReceita().equals(StatusReceita.A_RECEBER)) {
-                    if (b.getDataRecebimentoExperada().after(Date.from(Instant.now().plus(12, ChronoUnit.HOURS)))) {
+                    if (b.getDataRecebimentoExperada().before(Date.from(Instant.now().plus(12, ChronoUnit.HOURS)))) {
                         b.setStatusReceita(StatusReceita.ATRASADA);
                     }
                 }
@@ -53,7 +53,7 @@ public class ScheduleService {
         if (logsMoeda.size() > 0) {
             for (var m : logsMoeda) {
                 if (m.getStatusReceita().equals(StatusReceita.A_RECEBER)) {
-                    if (m.getDataRecebimentoExperada().after(Date.from(Instant.now().plus(12, ChronoUnit.HOURS)))) {
+                    if (m.getDataRecebimentoExperada().before(Date.from(Instant.now().plus(12, ChronoUnit.HOURS)))) {
                         m.setStatusReceita(StatusReceita.ATRASADA);
                     }
                 }
@@ -88,7 +88,7 @@ public class ScheduleService {
         if (logsCartao.size() > 0) {
             for (var c : logsCartao) {
                 if (c.getStatusDespesa().equals(StatusDespesa.A_PAGAR)) {
-                    if (c.getDataPagamentoExperada().before(Date.from(Instant.now().plus(12, ChronoUnit.HOURS)))) {
+                    if (c.getDataPagamentoExperada().after(Date.from(Instant.now().plus(12, ChronoUnit.HOURS)))) {
                         c.setStatusDespesa(StatusDespesa.ATRASADA);
                     }
                 }
@@ -97,7 +97,7 @@ public class ScheduleService {
         if (logsMoeda.size() > 0) {
             for (var m : logsMoeda) {
                 if (m.getStatusDespesa().equals(StatusDespesa.A_PAGAR)) {
-                    if (m.getDataPagamentoExperada().before(Date.from(Instant.now().plus(12, ChronoUnit.HOURS)))) {
+                    if (m.getDataPagamentoExperada().after(Date.from(Instant.now().plus(12, ChronoUnit.HOURS)))) {
                         m.setStatusDespesa(StatusDespesa.ATRASADA);
                     }
                 }

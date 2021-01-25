@@ -26,6 +26,6 @@ public class TipoPagamentoCartao extends TipoPagamento {
     @JoinColumn(name = "cartao_id", foreignKey = @ForeignKey(name = "tipo_pagamento_cartao_cartao_fkey"))
     private Cartao cartao;
     @Fetch(value = FetchMode.SUBSELECT)
-    @OneToMany(mappedBy = "tipoPagamentoCartao", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "tipoPagamentoCartao", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     private List<TipoPagamentoCartaoParcelas> tipoPagamentoCartaoParcelas = new ArrayList<>();
 }

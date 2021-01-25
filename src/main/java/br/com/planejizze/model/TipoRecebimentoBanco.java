@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -28,6 +29,6 @@ public class TipoRecebimentoBanco extends TipoRecebimento {
     @Column(name = "dia_pagamento")
     private String diaPagamento;
     @Fetch(FetchMode.SUBSELECT)
-    @OneToMany(mappedBy = "tipoRecebimentoBanco", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "tipoRecebimentoBanco", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     private List<TipoRecebimentoBancoLog> tipoRecebimentoBancoLogs = new ArrayList<>();
 }

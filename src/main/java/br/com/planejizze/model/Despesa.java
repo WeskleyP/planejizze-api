@@ -23,7 +23,7 @@ import java.util.Date;
 @Table(name = "despesa")
 @Data
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE despesa SET ativo = false WHlERE id = ?")
+@SQLDelete(sql = "UPDATE despesa SET ativo = false WHERE id = ?")
 @SequenceGenerator(name = "despesa_sequence", sequenceName = "despesa_sequence_pkey", allocationSize = 1)
 @Where(clause = Constants.ATIVO)
 @JsonIgnoreProperties({"createdOn", "updatedOn"})

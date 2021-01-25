@@ -46,6 +46,7 @@ public class ReceitaService extends AbstractService<Receita, Long, ReceitaReposi
         usuario.setId(TokenUtils.from(request).getUserId());
         entity.setUsuario(usuario);
         entity.getTipoRecebimento().setReceita(entity);
+        entity.getTipoRecebimento().setId(entity.getId());
         if (entity.getTipoRecebimento() instanceof TipoRecebimentoBanco) {
             ((TipoRecebimentoBanco) entity.getTipoRecebimento()).getTipoRecebimentoBancoLogs()
                     .forEach(tipoRecebimentoBancoLog -> tipoRecebimentoBancoLog.setTipoRecebimentoBanco((TipoRecebimentoBanco) entity.getTipoRecebimento()));

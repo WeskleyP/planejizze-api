@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -20,12 +21,14 @@ public abstract class TipoPagamento implements Serializable {
     private static final long serialVersionUID = -118387155139744055L;
 
     @Id
+    @Column(name = "despesa_id")
+    @GeneratedValue(generator = "gen")
+    @GenericGenerator(name = "gen", strategy = "foreign", parameters = @org.hibernate.annotations.Parameter(name = "property", value = "despesa"))
     private Long id;
 
     @JsonIgnore
     @OneToOne
-    @JoinColumn(name = "despesa_id", foreignKey =  @ForeignKey(name = "tipo_pagamento_despesa_fkey"))
-    @MapsId
+    @PrimaryKeyJoinColumn
     private Despesa despesa;
 
 }

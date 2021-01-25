@@ -1,7 +1,6 @@
 package br.com.planejizze.model;
 
 import br.com.planejizze.enums.TipoCartao;
-import br.com.planejizze.enums.TipoConta;
 import br.com.planejizze.utils.Constants;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -19,7 +18,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity

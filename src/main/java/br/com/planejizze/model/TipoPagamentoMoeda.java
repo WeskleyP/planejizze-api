@@ -27,6 +27,6 @@ public class TipoPagamentoMoeda extends TipoPagamento {
     @Column(name = "dia_pagamento")
     private String diaPagamento;
     @Fetch(FetchMode.SUBSELECT)
-    @OneToMany(mappedBy = "tipoPagamentoMoeda", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "tipoPagamentoMoeda", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     private List<TipoPagamentoMoedaLog> tipoPagamentoMoedaLogs = new ArrayList<>();
 }

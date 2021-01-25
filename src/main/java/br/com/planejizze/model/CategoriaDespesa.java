@@ -38,7 +38,7 @@ public class CategoriaDespesa {
     @NotNull(message = "O nome não dever ser nulo!")
     private String nome;
     @Column(name = "cor")
-    @Pattern(regexp = "/[0-9a-fA-F]+/", message = "Cor inváilida!")
+    @Pattern(regexp = "[#-0-9a-fA-F]+", message = "Cor inváilida!")
     private String cor;
     @JsonIgnore
     @Column(name = "ativo", nullable = false, columnDefinition = "boolean default true")
