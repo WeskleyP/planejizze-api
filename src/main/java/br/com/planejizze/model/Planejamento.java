@@ -66,7 +66,7 @@ public class Planejamento {
     @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "planejamento_usuario_fkey"))
     private Usuario usuario;
     @OneToMany(mappedBy = "planejamentoCategoriaPK.planejamento", fetch = FetchType.EAGER,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.DETACH})
+            cascade = {CascadeType.ALL})
     private List<PlanejamentoCategoria> categorias;
 
     public Planejamento(Long id, String descricao, Long alertaPorcentagem,

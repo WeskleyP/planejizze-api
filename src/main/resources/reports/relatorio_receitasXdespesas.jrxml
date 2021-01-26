@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.10.0.final using JasperReports Library version 6.10.0-unknown  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorio_receitasXdespesas" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5edd65d5-8a18-4a83-986f-0c892d5ce147">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="PG_Connection"/>
+	<parameter name="p_usuario" class="java.lang.Long"/>
+	<parameter name="p_dataIni" class="java.util.Date"/>
+	<parameter name="p_dataFim" class="java.util.Date"/>
+	<queryString language="SQL">
+		<![CDATA[select d.descricao as descricao, d.despesa_fixa as fixa, cd.nome as nomeCategoria, cd.cor as corCategoria, 
+(case when tpm.despesa_id is not null then 'Pagamento com dinheiro' else 'Pagamento com cartão' end) as tipo,
+(case when tpm.despesa_id is not null then tpml.valor_pagamento else tpcp.valor_parcela end) as valorPago,
+res.descricao as descricaoReceita, res.repetir as repetirReceita, res.nomeCategoria as nomeCategoriaReceita, res.corCategoria as corCategoriaReceita, 
+res.tipo as tipoReceita, res.valorRecebido as valorRecebidoReceita, 
+sum((case when tpm.despesa_id is not null then tpml.valor_pagamento else tpcp.valor_parcela end)) as totalDespesa,
+sum(res.valorRecebido) as totalReceita
+from despesa d 
+inner join categoria_despesa cd on cd.id = d.categoria_despesa_id 
+inner join tipo_pagamento tp on tp.despesa_id = d.id 
+left join tipo_pagamento_cartao tpc on tpc.despesa_id = tp.despesa_id 
+left join tipo_pagamento_cartao_parcelas tpcp on tpcp.tipo_pagamento_cartao_id = tpc.despesa_id 
+left join tipo_pagamento_moeda tpm on tpm.despesa_id = tp.despesa_id 
+left join tipo_pagamento_moeda_log tpml on tpml.tipo_pagamento_moeda_id = tpm.despesa_id 
+left join lateral (select r.descricao as descricao, r.repetir as repetir, cr.nome as nomeCategoria, cr.cor as corCategoria, 
+			(case when trb.receita_id is not null then 'Recebimento via Conta' else 'Recebimento via dinheiro' end) as tipo,
+			(case when trb.receita_id is not null then trbl.valor_recebido else trml.valor_recebido end) as valorRecebido
+			from receita r 
+			inner join categoria_receita cr on cr.id = r.categoria_receita_id
+			inner join tipo_recebimento tr on tr.receita_id = r.id 
+			left join tipo_recebimento_banco trb on trb.receita_id = tr.receita_id 
+			left join tipo_recebimento_banco_log trbl on trbl.tipo_recebimento_banco_id = trb.receita_id 
+			left join tipo_recebimento_moeda trm on trm.receita_id = tr.receita_id 
+			left join tipo_recebimento_moeda_log trml on trml.tipo_recebimento_moeda_id = trm.receita_id 
+			where r.usuario_id = $P!{p_usuario} and r.ativo
+			and (case when trb.receita_id is not null then trbl.status_receita = 0 else trml.status_receita = 0 end)
+			and (case when trb.receita_id is not null then 
+				trbl.data_recebimento_real >= cast($P!{p_dataIni} as text)::date and trbl.data_recebimento_real <= cast($P!{p_dataFim} as text)::date else 
+				trml.data_recebimento_real >= cast($P!{p_dataIni} as text)::date and trml.data_recebimento_real <= cast($P!{p_dataFim} as text)::date end)) as res on true
+where d.usuario_id = $P!{p_usuario} and d.ativo
+and (case when tpm.despesa_id is not null then tpml.status_despesa = 0 else tpcp.status_despesa = 0 end)
+and (case when tpm.despesa_id is not null then 
+	tpml.data_pagamento_real >= cast($P!{p_dataIni} as text)::date and tpml.data_pagamento_real <= cast($P!{p_dataFim} as text)::date else 
+	tpcp.data_pagamento_real >= cast($P!{p_dataIni} as text)::date and tpcp.data_pagamento_real <= cast($P!{p_dataFim} as text)::date end)
+group by d.descricao, d.despesa_fixa, cd.nome, cd.cor, tpm.despesa_id, tpml.valor_pagamento, tpcp.valor_parcela,
+	res.descricao, res.repetir, res.nomeCategoria, res.corCategoria, res.tipo, res.valorRecebido;]]>
+	</queryString>
+	<field name="descricao" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="descricao"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="despesa"/>
+	</field>
+	<field name="fixa" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.label" value="fixa"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="despesa"/>
+	</field>
+	<field name="nomecategoria" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nomecategoria"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="categoria_despesa"/>
+	</field>
+	<field name="corcategoria" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="corcategoria"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="categoria_despesa"/>
+	</field>
+	<field name="tipo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="tipo"/>
+	</field>
+	<field name="valorpago" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="valorpago"/>
+	</field>
+	<field name="descricaoreceita" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="descricaoreceita"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="receita"/>
+	</field>
+	<field name="repetirreceita" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.label" value="repetirreceita"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="receita"/>
+	</field>
+	<field name="nomecategoriareceita" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nomecategoriareceita"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="categoria_receita"/>
+	</field>
+	<field name="corcategoriareceita" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="corcategoriareceita"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="categoria_receita"/>
+	</field>
+	<field name="tiporeceita" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="tiporeceita"/>
+	</field>
+	<field name="valorrecebidoreceita" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="valorrecebidoreceita"/>
+	</field>
+	<field name="totalDespesa" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="totalDespesa"/>
+	</field>
+	<field name="totalReceita" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="totalReceita"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="80" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="100" backcolor="#65008C" uuid="ad576dd6-f4e5-42b7-9c3c-1ebd5aa386cc"/>
+				<textField>
+					<reportElement x="0" y="30" width="594" height="70" forecolor="#FFFFFF" uuid="2362fbc7-d9bd-4302-b2e2-84b696c8d2db"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+						<font size="34"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" Relatorio despesas X receitas"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="594" height="30" forecolor="#D9D7D7" backcolor="#470061" uuid="7b0ac55d-008e-4967-a773-c85f315a4dac"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="16"/>
+					</textElement>
+					<text><![CDATA[Planejizze]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="11" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="37" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="124" height="32" uuid="ab0efcda-9c23-49af-b1b0-4eac0bfb89d1"/>
+				<text><![CDATA[Descrição despesa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="125" y="0" width="40" height="32" uuid="53da7bb2-291b-4627-a63a-9d89087fae40"/>
+				<text><![CDATA[Fixa?]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="165" y="0" width="94" height="32" uuid="b6c4fbc9-4a3e-402c-8c39-559d26fdb9f9"/>
+				<text><![CDATA[Categoria despesa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="0" width="120" height="32" uuid="8cbecd7b-7302-4b41-8fa8-77faf8bad8b7"/>
+				<text><![CDATA[Tipo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="0" width="90" height="32" uuid="bbe53748-3b72-46ed-9f0b-fef1f34c6d0a"/>
+				<text><![CDATA[Valor Pago]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="102" splitType="Stretch">
+			<textField isBlankWhenNull="false">
+				<reportElement x="0" y="0" width="124" height="30" uuid="8bc484b5-e905-4365-8b02-21ae413d4603"/>
+				<textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement x="125" y="0" width="40" height="30" uuid="ff971df3-cc00-4c74-81a1-c3601c549234"/>
+				<textFieldExpression><![CDATA[$F{fixa} == true ? "Sim" : "Não"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement x="165" y="0" width="94" height="30" uuid="b8626f05-c461-4eaa-a84e-0f5c47b69a1c"/>
+				<textFieldExpression><![CDATA[$F{nomecategoria}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement x="260" y="0" width="120" height="30" uuid="dcd080af-1f33-4350-9cbb-c606dd8e17d9"/>
+				<textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement x="380" y="0" width="90" height="30" uuid="35151396-f5c9-42c4-a038-b43305ca760f"/>
+				<textFieldExpression><![CDATA[$F{valorpago}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="165" y="40" width="94" height="32" uuid="0f33c3b0-c801-4c52-9397-657c83be966f"/>
+				<text><![CDATA[Categoria receita]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="40" width="120" height="32" uuid="eaa1397a-60b0-4641-95cf-42c5eb8be845"/>
+				<text><![CDATA[Tipo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="40" width="90" height="32" uuid="24637489-a7ae-4420-bc08-bdae37b7df74"/>
+				<text><![CDATA[Valor Recebido]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="40" width="124" height="32" uuid="c6a8caff-5f46-42e6-b549-74cb28a1fa97"/>
+				<text><![CDATA[Descrição Receita]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="125" y="40" width="40" height="32" uuid="68c1630e-b9fa-4e8b-97c2-06c03ac11ecc"/>
+				<text><![CDATA[Repete-se]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="40" width="560" height="1" uuid="49ab00bb-19fe-4edc-aded-6139d3e5eb29"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="380" y="70" width="90" height="30" uuid="f264ab40-84b7-47a9-a2de-22988c57d6e7"/>
+				<textFieldExpression><![CDATA[$F{valorrecebidoreceita}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="70" width="124" height="30" uuid="966673ad-402e-40c1-94b6-34b47fe1fdb0"/>
+				<textFieldExpression><![CDATA[$F{descricaoreceita}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="165" y="70" width="94" height="30" uuid="f1802629-023b-4567-8f60-99ea4992918d"/>
+				<textFieldExpression><![CDATA[$F{nomecategoriareceita}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="260" y="70" width="120" height="30" uuid="f3e43e72-3e40-477f-84e4-cc9518534e14"/>
+				<textFieldExpression><![CDATA[$F{tiporeceita}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="125" y="70" width="40" height="30" uuid="64f55561-9787-4c6d-9088-b6812a6c6bc1"/>
+				<textFieldExpression><![CDATA[$F{repetirreceita} == true ? "Sim" : "Não"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch">
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="0" y="0" width="100" height="30" uuid="9ebd37dc-7fde-4677-b4a0-2ad05db9d659"/>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="403" y="0" width="52" height="30" uuid="9dfbee0f-7b7e-46f5-b71b-ac3efb09aaad"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Página:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="455" y="0" width="100" height="30" uuid="a665c31f-2243-41fc-9531-0d60ee9cc08a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="152" y="0" width="100" height="32" uuid="1dd503ac-eb3f-4074-889f-b08a42c84ab4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{totalDespesa}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="100" y="0" width="52" height="30" uuid="6ae17b34-e021-46b0-bd91-107183bb2235"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Total (R$) Despesas:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="303" y="-1" width="100" height="32" uuid="9c340550-86fd-4bb6-9911-3008dae91de1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{totalReceita}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="253" y="1" width="52" height="30" uuid="ae5af48d-d725-4e23-80ae-0d5f2669dbc3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Total (R$) Receitas:]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+	<noData>
+		<band height="56">
+			<staticText>
+				<reportElement x="240" y="20" width="100" height="30" uuid="7c5e71db-bd7a-499b-b038-e436a7458c15"/>
+				<text><![CDATA[Não foram encontrados dados para o periodo especificado!]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

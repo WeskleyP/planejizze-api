@@ -22,8 +22,8 @@ public abstract class TipoPagamento implements Serializable {
 
     @Id
     @Column(name = "despesa_id")
-    @GeneratedValue(generator = "gen")
-    @GenericGenerator(name = "gen", strategy = "foreign", parameters = @org.hibernate.annotations.Parameter(name = "property", value = "despesa"))
+    @GeneratedValue(generator = "gen2")
+    @GenericGenerator(name = "gen2", strategy = "foreign", parameters = @org.hibernate.annotations.Parameter(name = "property", value = "despesa"))
     private Long id;
 
     @JsonIgnore

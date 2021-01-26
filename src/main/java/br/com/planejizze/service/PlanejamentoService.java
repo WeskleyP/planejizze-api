@@ -67,17 +67,8 @@ public class PlanejamentoService extends AbstractService<Planejamento, Long, Pla
         Usuario usuario = new Usuario();
         usuario.setId(TokenUtils.from(request).getUserId());
         entity.setUsuario(usuario);
-        Planejamento plan = repo.save(new Planejamento(entity.getId(), entity.getDescricao(), entity.getAlertaPorcentagem(),
-                entity.getMetaGastos(), entity.getDataInicio(), entity.getDataFim(), entity.getUsuario()));
-        List<PlanejamentoCategoria> planejamentoCategoria = new ArrayList<>();
-        for (PlanejamentoCategoria categoria : entity.getCategorias()) {
-            PlanejamentoCategoria pl = new PlanejamentoCategoria(new PlanejamentoCategoriaPK(
-                    plan, categoria.getPlanejamentoCategoriaPK().getCategoriaDespesa()),
-                    categoria.getValorMaximoGasto());
-            planejamentoCategoria.add(pl);
-        }
-        plan.setCategorias(planejamentoCategoria);
-        return repo.save(plan);
+        entity.getCategorias().forEach(cat -> cat.getPlanejamentoCategoriaPK().setPlanejamento(entity));
+        return repo.save(entity);
     }
 
     @Override

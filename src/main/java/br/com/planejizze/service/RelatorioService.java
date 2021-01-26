@@ -27,8 +27,9 @@ public class RelatorioService {
         this.dataSource = dataSource;
     }
 
-    public JasperPrint imprimeRelatorioDownload(String file) {
+    public JasperPrint imprimeRelatorioDownload(String file, Map<String, Object> data) {
         this.params.put(JRParameter.REPORT_LOCALE, new Locale("pt", "BR"));
+        if (data.size() > 0) this.params.putAll(data);
         try {
             InputStream arquivo = this.getClass().getResourceAsStream(DIR_RELATORIOS + file + ".jasper");
             return JasperFillManager.fillReport(arquivo, params, conexao());
@@ -42,8 +43,9 @@ public class RelatorioService {
         return this.dataSource.getConnection();
     }
 
-    public byte[] imprimeRelatorioNavegador(String file) {
+    public byte[] imprimeRelatorioNavegador(String file, Map<String, Object> data) {
         this.params.put(JRParameter.REPORT_LOCALE, new Locale("pt", "BR"));
+        if (data.size() > 0) this.params.putAll(data);
         try {
             InputStream arquivo = this.getClass().getResourceAsStream(DIR_RELATORIOS + file + ".jasper");
             JasperPrint jasperPrint = JasperFillManager.fillReport(arquivo, params, conexao());

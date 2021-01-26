@@ -52,12 +52,12 @@ public class ResourceExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(err);
     }
 
-    @ExceptionHandler({Exception.class, FileStorageException.class})
-    public ResponseEntity<StandardError> serverError(RuntimeException e, HttpServletRequest request) {
-        StandardError err = new StandardError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(),
-                System.currentTimeMillis(), "Erro no servidor!", request.getRequestURI());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
-    }
+//    @ExceptionHandler({Exception.class, FileStorageException.class})
+//    public ResponseEntity<StandardError> serverError(RuntimeException e, HttpServletRequest request) {
+//        StandardError err = new StandardError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(),
+//                System.currentTimeMillis(), "Erro no servidor!", request.getRequestURI());
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
+//    }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<StandardError> dataIntegrity(DataIntegrityViolationException e, HttpServletRequest request) {

@@ -91,10 +91,12 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long> {
             "and ((tpc.despesa_id is not null " +
             "	and tpcp.tipo_pagamento_cartao_id is not null " +
             "	and (tpcp.status_despesa = 0)" +
+            "   and tpcp.data_pagamento_real is not null" +
             "	and tpcp.data_pagamento_real >=  (now() - interval '6 month'))" +
             "	or (tpm.despesa_id is not null " +
             "		and tpml.tipo_pagamento_moeda_id is not null " +
             "		and (tpml.status_despesa = 0)" +
+            "       and tpml.data_pagamento_real is not null" +
             "		and tpml.data_pagamento_real >=  (now() - interval '6 month')))" +
             "	group by cd.id", nativeQuery = true)
     List<String> findDespesasLast6Months(Long userId);
