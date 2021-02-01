@@ -58,8 +58,8 @@ security:
   jwt:
     token:
       secret-key: "Chave secreta para ser utilizada na api"
-      expire-length: 86400000
-      refresh-expire-length: 604800000
+      expire-length: 864000000000
+      refresh-expire-length: 6048000000000
 default:
   sender: weskleypedro@gmail.com
   dns: http://localhost:5555
